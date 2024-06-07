@@ -1,0 +1,17 @@
+.container {
+    display: flex;
+  }
+  
+  .content {
+    flex: 1;
+    padding: 20px;
+    margin-left: 250px; /* Ajusta este valor según el ancho de tu barra lateral */
+    /* Asegúrate de que el contenido no se superponga con la barra lateral */
+    z-index: 1;
+    position: relative;
+  }
+  
+body{
+  background-color: #F2F2F2;
+  color: #010326;
+}

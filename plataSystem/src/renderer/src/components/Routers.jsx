@@ -1,9 +1,11 @@
-import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import LoginSection from '../pages/LoginSection'
 import Clients from '../pages/Clients'
 import Immuebles from '../pages/Immuebles'
 import Home from '../pages/Home'
+import Arredamientos from '../pages/Arredamientos'
+import Pagos from '../pages/Pagos'
+import Users from '../pages/Users'
 function Routers() {
   return (
     <Routes>
@@ -11,6 +13,9 @@ function Routers() {
       <Route path="/Home" element={<Home />} />
       <Route path="/Clients" element={<Clients />} />
       <Route path="/Immuebles" element={<Immuebles />} />
+      <Route path="/Arredamientos" element={<Arredamientos />} />
+      <Route path="/Pagos" element={<Pagos />} />
+      <Route path="/Users" element={<Users />} />
     </Routes>
   )
 }

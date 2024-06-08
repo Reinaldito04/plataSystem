@@ -1,0 +1,30 @@
+/* Autocomplete.css */
+.autocomplete-container {
+    position: relative;
+    width: 300px; /* Ajusta según sea necesario */
+  }
+  
+  .autocomplete-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000; /* Asegúrate de que la lista esté por encima de otros elementos */
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  .autocomplete-item {
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .autocomplete-item:hover {
+    background-color: #f0f0f0;
+  }
+  

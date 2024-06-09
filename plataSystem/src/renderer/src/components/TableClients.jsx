@@ -1,5 +1,6 @@
 import DataTable from 'react-data-table-component'
 
+
 const columns = [
   {
     name: 'Title',

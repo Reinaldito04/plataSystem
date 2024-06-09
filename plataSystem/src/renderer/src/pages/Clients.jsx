@@ -6,12 +6,12 @@ function Clients() {
   return (
     <Layout>
       <h3 className="text-center">Clientes Registrados</h3>
-      <div className="container d-flex">
-        <AddClient />
-      </div>
 
       <div className="container-fluid">
         <TableClients />
+      </div>
+      <div className="container d-flex">
+        <AddClient />
       </div>
     </Layout>
   )

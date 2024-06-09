@@ -1,0 +1,14 @@
+.modalArriendo {
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh; /* Establece una altura máxima para el modal */
+    
+  }
+  
+  .modal-content {
+    max-height: 70vh; /* Establece una altura máxima para el contenido */
+    overflow-y: auto; /* Permite el scroll vertical */
+    padding: 20px;
+  }
+  

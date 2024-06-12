@@ -1,65 +1,56 @@
-import { useState } from 'react'
+// src/components/TableClients.js
+
+import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
+import axiosInstance from '../utils/BackendConfig'
 
 const columns = [
   {
-    name: 'Propietario',
-    selector: (row) => row.title,
+    name: 'ID',
+    selector: (row) => row.ID,
     sortable: true
   },
   {
-    name: 'Ubicación',
-    selector: (row) => row.location,
+    name: 'Propietario',
+    selector: (row) => `${row.NombrePropietario} ${row.ApellidoPropietario}`,
+    sortable: true
+  },
+  {
+    name: 'Direccion',
+    selector: (row) => row.Direccion,
     sortable: true
   },
   {
     name: 'Tipo',
-    selector: (row) => row.type,
-    sortable: true
-  },
-  {
-    name: 'Alquilado por',
-    selector: (row) => row.rentedBy,
+    selector: (row) => row.Tipo,
     sortable: true
   }
 ]
 
-const data = [
-  {
-    id: 1,
-    title: 'Beetlejuice',
-    location: 'New York',
-    type: 'Apartment',
-    rentedBy: 'John Doe'
-  },
-  {
-    id: 2,
-    title: 'Ghostbusters',
-    location: 'Los Angeles',
-    type: 'House',
-    rentedBy: 'Jane Smith'
-  }
-  // Añade más datos según sea necesario
-]
+function TableClients() {
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-function TableImmuebles() {
-  const [filterText, setFilterText] = useState('')
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get('/getInmuebles')
+        setData(response.data)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  const filteredItems = data.filter(
-    (item) => item.title && item.title.toLowerCase().includes(filterText.toLowerCase())
-  )
+    fetchData()
+  }, [])
 
-  return (
-    <div>
-      <input
-        type="text"
-        placeholder="Buscar..."
-        value={filterText}
-        onChange={(e) => setFilterText(e.target.value)}
-      />
-      <DataTable columns={columns} data={filteredItems} pagination />
-    </div>
-  )
+  if (loading) return <p>Loading...</p>
+  if (error) return <p>Error: {error}</p>
+
+  return <DataTable columns={columns} data={data} pagination />
 }
 
-export default TableImmuebles
+export default TableClients

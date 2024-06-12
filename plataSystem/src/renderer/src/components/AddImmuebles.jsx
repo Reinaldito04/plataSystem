@@ -2,22 +2,57 @@ import { useState } from 'react'
 import Modal from 'react-modal'
 import './styles/Addclient.css'
 import Autocomplete from './AutoCompleted'
+import axiosInstance from '../utils/BackendConfig'
+
 function AddImmuebles() {
   const [modalIsOpen, setModalIsOpen] = useState(false)
-
   const [autocompleteValue, setAutocompleteValue] = useState('')
+  const [formData, setFormData] = useState({
+    Direccion: '',
+    Tipo: ''
+  })
+  const [alertMessage, setAlertMessage] = useState(null)
 
   const handleAutocompleteSelect = (value) => {
     setAutocompleteValue(value)
   }
 
-  const handleSubmit = (e) => {
+  const handleChange = (event) => {
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value
+    })
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
     const notes = e.target.elements.notes.value
-    console.log('Autocomplete:', autocompleteValue)
-    console.log('Notas:', notes)
-    // Aquí puedes hacer algo con los valores, como enviarlos a un servidor
+
+    // Combina los datos del formulario con el valor del autocompletado
+    const dataToSend = {
+      ...formData,
+      CedulaPropietario: autocompleteValue,
+      notas: notes
+    }
+
+    try {
+      // Envía los datos al servidor
+      const response = await axiosInstance.post('/addInmueble', dataToSend)
+      console.log('Respuesta del servidor:', response.data)
+      // Muestra el mensaje de éxito
+      setAlertMessage('¡Inmueble añadido correctamente!')
+      // Cierra el modal después de un tiempo
+      setTimeout(() => {
+        setModalIsOpen(false)
+        setAlertMessage(null)
+      }, 2000)
+    } catch (error) {
+      console.error('Error al enviar el formulario:', error)
+      // Muestra el mensaje de error
+      setAlertMessage('Error al añadir el inmueble. Por favor, inténtalo de nuevo.')
+    }
   }
+
   return (
     <>
       <div className="container">
@@ -46,20 +81,39 @@ function AddImmuebles() {
         <h2>Añadir Inmueble</h2>
         <div className="container">
           <form onSubmit={handleSubmit}>
+            {alertMessage && (
+              <div className="alert alert-success" role="alert">
+                {alertMessage}
+              </div>
+            )}
             <Autocomplete onSelect={handleAutocompleteSelect} />
 
             <div className="form-group">
               <label>Ubicación</label>
-              <input type="text" className="form-control" id="location" placeholder="Ubicación" />
+              <input
+                type="text"
+                className="form-control"
+                id="location"
+                name="Direccion"
+                placeholder="Ubicación"
+                onChange={handleChange}
+              />
             </div>
             <div className="form-group">
               <label>Tipo</label>
-              <input type="text" className="form-control" id="type" placeholder="Tipo" />
+              <input
+                type="text"
+                className="form-control"
+                id="type"
+                name="Tipo"
+                placeholder="Tipo"
+                onChange={handleChange}
+              />
             </div>
 
             <div className="form-group">
               <label htmlFor="notes">Notas</label>
-              <textarea className="form-control" id="notes" rows="3"></textarea>
+              <textarea className="form-control" id="notes" name="notes" rows="3"></textarea>
             </div>
 
             <button type="submit" className="btn btn-primary">

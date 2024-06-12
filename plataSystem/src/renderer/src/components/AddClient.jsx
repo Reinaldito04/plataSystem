@@ -1,15 +1,40 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Modal from 'react-modal'
 import './styles/Addclient.css'
+import axiosInstance from '../utils/BackendConfig'
 function AddClient() {
   const [modalIsOpen, setModalIsOpen] = useState(false)
-  const [fechaNacimiento, setFechaNacimiento] = useState('')
 
+  const [formData, setFormData] = useState({
+    name: '',
+    lastName: '',
+    dni: '',
+    email: '',
+    phone: '',
+    rif: '',
+    address: '',
+    birthdate: '',
+    CodePostal: '',
+    notes: ''
+  })
   const handleChange = (event) => {
-    const inputDate = event.target.value // Obtener el valor del input
-    const fechaSinHora = inputDate.slice(0, 10) // Obtener solo la parte de la fecha (los primeros 10 caracteres)
-    setFechaNacimiento(fechaSinHora) // Actualizar el estado con la fecha sin la hora
+    setFormData({
+      ...formData,
+      [event.target.name]: event.target.value
+    })
   }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    try {
+      await axiosInstance.post('/addClient', formData)
+      console.log('Cliente guardado exitosamente')
+      setModalIsOpen(false)
+    } catch (error) {
+      console.error('Error al guardar el cliente:', error)
+    }
+  }
+
   return (
     <>
       <div className="container">
@@ -35,26 +60,31 @@ function AddClient() {
             X
           </button>
         </div>
-        <h2>Añadir cliente (dueño)</h2>
+        <h2>Añadir cliente (Propietario)</h2>
         <div className="container">
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="name">Nombre</label>
               <input
                 type="text"
                 className="form-control"
                 id="name"
+                name="name"
                 placeholder="Ingrese su nombre"
+                value={formData.name}
+                onChange={handleChange}
               />
             </div>
             <div className="form-group">
-              <label htmlFor="apellido">Apellido</label>
+              <label htmlFor="lastName">Apellido</label>
               <input
                 type="text"
                 className="form-control"
-                name="apellido"
+                name="lastName"
                 placeholder="Ingrese su apellido"
-                id=""
+                value={formData.lastName}
+                onChange={handleChange}
+                id="lastName"
               />
             </div>
             <div className="form-group">
@@ -64,7 +94,21 @@ function AddClient() {
                 className="form-control"
                 name="dni"
                 placeholder="Ingrese su Cedula "
-                id=""
+                value={formData.dni}
+                onChange={handleChange}
+                id="dni"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="dni">Rif </label>
+              <input
+                type="text"
+                className="form-control"
+                name="rif"
+                placeholder="Ingrese su Rif "
+                value={formData.rif}
+                onChange={handleChange}
+                id="rif"
               />
             </div>
             <div className="form-group">
@@ -73,6 +117,9 @@ function AddClient() {
                 type="email"
                 className="form-control"
                 id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 placeholder="Ingrese su correo"
               />
             </div>
@@ -83,6 +130,9 @@ function AddClient() {
                 type="text"
                 className="form-control"
                 id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
                 placeholder="Ingrese su telefóno"
               />
             </div>
@@ -93,6 +143,9 @@ function AddClient() {
                 type="text"
                 className="form-control"
                 id="address"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
                 placeholder="Ingrese su dirección"
               />
             </div>
@@ -101,27 +154,40 @@ function AddClient() {
               <label htmlFor="date">Fecha de Nacimiento</label>
               <input
                 type="date"
-                value={fechaNacimiento}
-                onChange={handleChange}
+                value={formData.birthdate}
+                onChange={(event) => {
+                  handleChange(event)
+                }}
                 className="form-control"
                 id="date"
+                name="birthdate"
                 placeholder="Ingrese su fecha de nacimiento"
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="postalCode">Código Postal</label>
+              <label htmlFor="CodePostal">Código Postal</label>
               <input
                 type="text"
                 className="form-control"
-                id="postalCode"
+                id="CodePostal"
+                value={formData.postalCode}
+                onChange={handleChange}
+                name="CodePostal"
                 placeholder="Ingrese su Código Postal"
               />
             </div>
 
             <div className="form-group">
               <label htmlFor="notes">Notas</label>
-              <textarea className="form-control" id="notes" rows="3"></textarea>
+              <textarea
+                className="form-control"
+                value={formData.notes}
+                name="notes"
+                onChange={handleChange}
+                id="notes"
+                rows="3"
+              ></textarea>
             </div>
 
             <button type="submit" className="btn btn-primary">

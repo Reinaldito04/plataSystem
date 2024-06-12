@@ -1,45 +1,60 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './styles/Autocomplete.css'
 import PropTypes from 'prop-types'
-
-const users = [
-  { name: 'John Doe', dni: '12345678' },
-  { name: 'Jane Smith', dni: '12345679' },
-  { name: 'Jim Beam', dni: '12345670' },
-  { name: 'Jill Valentine', dni: '12345671' },
-  { name: 'Jake Muller', dni: '12345672' }
-  // Añade más usuarios según sea necesario
-]
+import axiosInstance from '../utils/BackendConfig'
 
 function Autocomplete({ onSelect }) {
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get('/getClients')
+        setData(response.data)
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
   const [inputText, setInputText] = useState('')
   const [filteredUsers, setFilteredUsers] = useState([])
 
-  const handleChange = (e) => {
-    const text = e.target.value
-    setInputText(text)
-    if (text.length > 0) {
-      const filtered = users.filter(
-        (user) => user.name.toLowerCase().includes(text.toLowerCase()) || user.dni.includes(text)
+  useEffect(() => {
+    if (inputText.length > 0) {
+      const filtered = data.filter(
+        (user) =>
+          user.name.toLowerCase().includes(inputText.toLowerCase()) || user.dni.includes(inputText)
       )
       setFilteredUsers(filtered)
     } else {
       setFilteredUsers([])
     }
+  }, [inputText, data])
+
+  const handleChange = (e) => {
+    setInputText(e.target.value)
   }
 
   const handleSelect = (user) => {
-    const selectedText = `${user.name} --- ${user.dni}`
-    setInputText(selectedText)
+    const selectedText = `${user.name} ${user.lastName} --- ${user.dni}`
+    const selectedValue = selectedText.split('---')[1].trim() // Obtiene el valor después de "---"
+    setInputText(selectedValue) // Solo establece el texto seleccionado
     setFilteredUsers([])
     if (onSelect) {
-      onSelect(selectedText)
+      onSelect(selectedValue)
     }
   }
 
   return (
     <div className="autocomplete-container">
-      <label>Dueño</label>
+      <label>Propietario</label>
       <input
         type="text"
         className="form-control"
@@ -52,7 +67,7 @@ function Autocomplete({ onSelect }) {
         <ul className="autocomplete-results">
           {filteredUsers.map((user, index) => (
             <li key={index} className="autocomplete-item" onClick={() => handleSelect(user)}>
-              {user.name} --- {user.dni}
+              {user.name} {user.lastName} --- {user.dni}
             </li>
           ))}
         </ul>

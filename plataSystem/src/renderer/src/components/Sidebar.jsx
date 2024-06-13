@@ -24,6 +24,12 @@ function Sidebar() {
           </Link>
         </li>
         <li>
+          <Link to="/Inquilinos" className="sidebar-link">
+            <i className="fas fa-users"></i>
+            <span>Inquilinos</span>
+          </Link>
+        </li>
+        <li>
           <Link to="/Immuebles" className="sidebar-link">
             <i className="fas fa-users"></i>
             <span>Inmuebles</span>

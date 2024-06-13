@@ -35,21 +35,29 @@ function AddImmuebles() {
       notas: notes
     }
 
-    try {
-      // Envía los datos al servidor
-      const response = await axiosInstance.post('/addInmueble', dataToSend)
-      console.log('Respuesta del servidor:', response.data)
-      // Muestra el mensaje de éxito
-      setAlertMessage('¡Inmueble añadido correctamente!')
-      // Cierra el modal después de un tiempo
-      setTimeout(() => {
-        setModalIsOpen(false)
-        setAlertMessage(null)
-      }, 2000)
-    } catch (error) {
-      console.error('Error al enviar el formulario:', error)
-      // Muestra el mensaje de error
-      setAlertMessage('Error al añadir el inmueble. Por favor, inténtalo de nuevo.')
+    if (formData.Direccion == '') {
+      alert('Se necesita agregar la ubicación del inmueble')
+    } else if (formData.Tipo == '') {
+      alert('Se necesita agregar el tipo del inmueble')
+    } else if (autocompleteValue == '') {
+      alert('Se necesita agregar el propietario')
+    } else {
+      try {
+        // Envía los datos al servidor
+        const response = await axiosInstance.post('/addInmueble', dataToSend)
+        console.log('Respuesta del servidor:', response.data)
+        // Muestra el mensaje de éxito
+        setAlertMessage('¡Inmueble añadido correctamente!')
+        // Cierra el modal después de un tiempo
+        setTimeout(() => {
+          setModalIsOpen(false)
+          setAlertMessage(null)
+        }, 2000)
+      } catch (error) {
+        console.error('Error al enviar el formulario:', error)
+        // Muestra el mensaje de error
+        setAlertMessage('Error al añadir el inmueble. Por favor, inténtalo de nuevo.')
+      }
     }
   }
 
@@ -86,7 +94,12 @@ function AddImmuebles() {
                 {alertMessage}
               </div>
             )}
-            <Autocomplete onSelect={handleAutocompleteSelect} />
+            <Autocomplete
+              endpoint="/getClients"
+              label="Propietario"
+              placeholder="Ingrese su nombre o cédula"
+              onSelect={handleAutocompleteSelect}
+            />
 
             <div className="form-group">
               <label>Ubicación</label>

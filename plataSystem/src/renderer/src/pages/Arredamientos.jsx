@@ -1,6 +1,7 @@
 import Layout from '../components/SideBarLayout'
 import AddArriendo from '../components/AddArriendo'
 import TableArriendos from '../components/TableArriendos'
+
 function Arredamientos() {
   return (
     <Layout>

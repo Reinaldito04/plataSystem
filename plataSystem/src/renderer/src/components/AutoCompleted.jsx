@@ -3,7 +3,7 @@ import './styles/Autocomplete.css'
 import PropTypes from 'prop-types'
 import axiosInstance from '../utils/BackendConfig'
 
-function Autocomplete({ onSelect }) {
+function Autocomplete({ endpoint, label, placeholder, onSelect }) {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -11,7 +11,7 @@ function Autocomplete({ onSelect }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get('/getClients')
+        const response = await axiosInstance.get(endpoint)
         setData(response.data)
       } catch (err) {
         setError(err.message)
@@ -21,20 +21,21 @@ function Autocomplete({ onSelect }) {
     }
 
     fetchData()
-  }, [])
+  }, [endpoint])
 
   const [inputText, setInputText] = useState('')
-  const [filteredUsers, setFilteredUsers] = useState([])
+  const [filteredItems, setFilteredItems] = useState([])
 
   useEffect(() => {
     if (inputText.length > 0) {
       const filtered = data.filter(
-        (user) =>
-          user.name.toLowerCase().includes(inputText.toLowerCase()) || user.dni.includes(inputText)
+        (item) =>
+          item.name?.toLowerCase().includes(inputText.toLowerCase()) ||
+          item.dni?.includes(inputText)
       )
-      setFilteredUsers(filtered)
+      setFilteredItems(filtered)
     } else {
-      setFilteredUsers([])
+      setFilteredItems([])
     }
   }, [inputText, data])
 
@@ -42,32 +43,31 @@ function Autocomplete({ onSelect }) {
     setInputText(e.target.value)
   }
 
-  const handleSelect = (user) => {
-    const selectedText = `${user.name} ${user.lastName} --- ${user.dni}`
+  const handleSelect = (item) => {
+    const selectedText = `${item.name || ''} ${item.lastName || ''}  --- ${item.dni || ''}`
     const selectedValue = selectedText.split('---')[1].trim() // Obtiene el valor después de "---"
     setInputText(selectedValue) // Solo establece el texto seleccionado
-    setFilteredUsers([])
+    setFilteredItems([])
     if (onSelect) {
-      onSelect(selectedValue)
+      onSelect(selectedValue, item) // Pasamos el item completo
     }
   }
 
   return (
     <div className="autocomplete-container">
-      <label>Propietario</label>
+      <label>{label}</label>
       <input
         type="text"
         className="form-control"
-        id="name"
-        placeholder="Ingrese su nombre o cédula"
+        placeholder={placeholder}
         value={inputText}
         onChange={handleChange}
       />
-      {filteredUsers.length > 0 && (
+      {filteredItems.length > 0 && (
         <ul className="autocomplete-results">
-          {filteredUsers.map((user, index) => (
-            <li key={index} className="autocomplete-item" onClick={() => handleSelect(user)}>
-              {user.name} {user.lastName} --- {user.dni}
+          {filteredItems.map((item, index) => (
+            <li key={index} className="autocomplete-item" onClick={() => handleSelect(item)}>
+              {item.name} {item.lastName} --- {item.dni}
             </li>
           ))}
         </ul>
@@ -75,7 +75,11 @@ function Autocomplete({ onSelect }) {
     </div>
   )
 }
+
 Autocomplete.propTypes = {
+  endpoint: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  placeholder: PropTypes.string.isRequired,
   onSelect: PropTypes.func.isRequired
 }
 

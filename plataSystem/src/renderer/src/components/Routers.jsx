@@ -4,6 +4,7 @@ import Clients from '../pages/Clients'
 import Immuebles from '../pages/Immuebles'
 import Home from '../pages/Home'
 import Arredamientos from '../pages/Arredamientos'
+import Inquilinos from '../pages/Inquilinos'
 import Pagos from '../pages/Pagos'
 import Users from '../pages/Users'
 function Routers() {
@@ -15,6 +16,7 @@ function Routers() {
       <Route path="/Immuebles" element={<Immuebles />} />
       <Route path="/Arredamientos" element={<Arredamientos />} />
       <Route path="/Pagos" element={<Pagos />} />
+      <Route path="/Inquilinos" element={<Inquilinos />} />
       <Route path="/Users" element={<Users />} />
     </Routes>
   )

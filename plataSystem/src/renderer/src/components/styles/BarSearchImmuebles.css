@@ -56,3 +56,16 @@
     margin-top: 0;
   }
   
+.contenedorimagenes{
+  background-color: blue;
+  height: 80px;
+  margin: 0 auto;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+}
+.textoImagen{
+  font-size: 40px;
+}

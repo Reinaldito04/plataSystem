@@ -11,4 +11,6 @@
     overflow-y: auto; /* Permite el scroll vertical */
     padding: 20px;
   }
-  
+  .botonModalInmueble{
+    margin-left: 5px;
+  }

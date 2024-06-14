@@ -3,53 +3,67 @@ import Modal from 'react-modal'
 import './styles/AddArriendo.css'
 import InmuebleAutocomplete from './AutoCompletedArriendo'
 import axiosInstance from '../utils/BackendConfig'
+
 function AddArriendo() {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [selectedInmueble, setSelectedInmueble] = useState(null)
-
-  const [formData, setFormData] = useState({
-    InquilinoName: '',
-    InquilinoLastName: '',
-    InquilinoDNI: '',
-    InquilinoRIF: '',
-    InquilinoBirthday: '',
-    Telefono: '',
-    InquilinoMail: '',
-    PriceMensual: '',
-    InmuebleData: '2024 --- puerto la cruz',
-    PorcentajeComision: '',
-    FechaDeComision: ' ',
-    FechaInicio: '',
-    FechaFinalizacion: ''
-  })
-  const handleChange = (event) => {
-    setFormData({
-      ...formData,
-      [event.target.name]: event.target.value
-    })
-  }
+  const [inquilinoName, setInquilinoName] = useState('')
+  const [InquilinoLastName, setInquilinoLastName] = useState('')
+  const [InquilinoDNI, setInquilinoDNI] = useState('')
+  const [InquilinoRIF, setInquilinoRIF] = useState('')
+  const [InquilinoBirthday, setInquilinoBirthday] = useState('')
+  const [Telefono, setTelefono] = useState('')
+  const [InquilinoMail, setInquilinoMail] = useState('')
+  const [PriceMensual, setPriceMensual] = useState('')
+  const [PorcentajeComision, setPorcentajeComision] = useState('')
+  const [FechaDeComision, setFechaDeComision] = useState('')
+  const [FechaInicio, setFechaInicio] = useState('')
+  const [FechaFinalizacion, setFechaFinalizacion] = useState('')
+  const [notes, setNotes] = useState('')
   const handleInmuebleSelect = (inmueble) => {
     setSelectedInmueble(inmueble)
   }
-  const handleSubmit = async (event) => {
-    event.preventDefault()
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    const inmuebleData = selectedInmueble
+      ? `${selectedInmueble.CedulaPropietario} --- ${selectedInmueble.Direccion}`
+      : ''
+
+    const data = {
+      InquilinoName: inquilinoName,
+      InquilinoLastName: InquilinoLastName,
+      InquilinoDNI: InquilinoDNI,
+      InquilinoRIF: InquilinoRIF,
+      InquilinoBirthday: InquilinoBirthday,
+      Telefono: Telefono,
+      InquilinoMail: InquilinoMail,
+      InmuebleData: inmuebleData,
+      PriceMensual: PriceMensual,
+      PorcentajeComision: PorcentajeComision,
+      FechaDeComision: FechaDeComision,
+      FechaInicio: FechaInicio,
+      FechaFinalizacion: FechaFinalizacion
+    }
+
     try {
-      await axiosInstance.post('/addContract', formData)
-      console.log('Cliente guardado exitosamente')
+      const response = await axiosInstance.post('/addContract', data)
+      console.log('Response status:', response.status)
+      console.log('Response data:', response.data)
+      alert('Arriendo agregado exitosamente!')
       setModalIsOpen(false)
     } catch (error) {
-      console.error('Error al guardar el cliente:', error)
+      console.error('There was an error!', error)
+      console.error('Response status:', error.response?.status)
+      console.error('Response headers:', error.response?.headers)
+      alert('Hubo un error al agregar el arriendo.')
     }
   }
+
   return (
     <>
       <div className="text-center mt-2">
-        <button
-          onClick={() => {
-            setModalIsOpen(true)
-          }}
-          className="btn btn-primary"
-        >
+        <button onClick={() => setModalIsOpen(true)} className="btn btn-primary">
           Agregar Arriendo
         </button>
       </div>
@@ -72,86 +86,86 @@ function AddArriendo() {
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="client">Nombre del Cliente (inquilino)</label>
+              <label htmlFor="InquilinoName">Nombre del Cliente (inquilino)</label>
               <input
                 type="text"
                 className="form-control"
                 id="InquilinoName"
                 name="InquilinoName"
-                onChange={handleChange}
-                value={formData.InquilinoName}
                 placeholder="Ingrese el nombre del cliente"
+                value={inquilinoName}
+                onChange={(e) => setInquilinoName(e.target.value)}
               />
             </div>
             <div className="form-group">
-              <label htmlFor="client">Apellido del Cliente (inquilino)</label>
+              <label htmlFor="InquilinoLastName">Apellido del Cliente (inquilino)</label>
               <input
                 type="text"
                 className="form-control"
                 id="InquilinoLastName"
                 name="InquilinoLastName"
-                onChange={handleChange}
-                value={formData.InquilinoLastName}
+                value={InquilinoLastName}
+                onChange={(e) => setInquilinoLastName(e.target.value)}
                 placeholder="Ingrese el Apellido del cliente"
               />
             </div>
             <div className="form-group">
-              <label htmlFor="cedula">Cedula</label>
+              <label htmlFor="InquilinoDNI">Cedula</label>
               <input
                 type="text"
                 className="form-control"
                 id="InquilinoDNI"
+                value={InquilinoDNI}
+                onChange={(e) => setInquilinoDNI(e.target.value)}
                 name="InquilinoDNI"
-                onChange={handleChange}
-                value={formData.InquilinoDNI}
                 placeholder="Ingrese la cedula del cliente"
               />
             </div>
             <div className="form-group">
-              <label htmlFor="cedula">Rif</label>
+              <label htmlFor="InquilinoRIF">Rif</label>
               <input
                 type="text"
                 className="form-control"
                 id="InquilinoRIF"
+                value={InquilinoRIF}
+                onChange={(e) => setInquilinoRIF(e.target.value)}
                 name="InquilinoRIF"
-                onChange={handleChange}
-                value={formData.InquilinoRIF}
                 placeholder="Ingrese el rif del cliente"
               />
             </div>
             <div className="form-group">
-              <label htmlFor="cedula">Correo</label>
+              <label htmlFor="InquilinoMail">Correo</label>
               <input
                 type="email"
                 className="form-control"
                 id="InquilinoMail"
                 name="InquilinoMail"
-                onChange={handleChange}
-                value={formData.InquilinoMail}
+                value={InquilinoMail}
+                onChange={(e) => setInquilinoMail(e.target.value)}
                 placeholder="Ingrese el Email del cliente"
               />
-              <div className="form-group">
-                <label htmlFor="cedula">Telefono</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="Telefono"
-                  name="Telefono"
-                  onChange={handleChange}
-                  value={formData.Telefono}
-                  placeholder="Ingrese el telefono del cliente"
-                />
-              </div>
             </div>
             <div className="form-group">
-              <label htmlFor="date">Fecha de Nacimiento</label>
+              <label htmlFor="Telefono">Telefono</label>
+              <input
+                type="text"
+                className="form-control"
+                id="Telefono"
+                value={Telefono}
+                onChange={(e) => setTelefono(e.target.value)}
+                name="Telefono"
+                placeholder="Ingrese el telefono del cliente"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="InquilinoBirthday">Fecha de Nacimiento</label>
               <input
                 type="date"
                 className="form-control"
                 id="InquilinoBirthday"
+                value={InquilinoBirthday}
+                onChange={(e) => setInquilinoBirthday(e.target.value)}
                 name="InquilinoBirthday"
-                onChange={handleChange}
-                value={formData.InquilinoBirthday}
                 placeholder="Ingrese su fecha de nacimiento"
               />
             </div>
@@ -159,70 +173,72 @@ function AddArriendo() {
               <InmuebleAutocomplete onSelect={handleInmuebleSelect} />
             </div>
             <div className="form-group">
-              <label htmlFor="price">Precio (mensual)</label>
+              <label htmlFor="PriceMensual">Precio (mensual)</label>
               <input
                 type="text"
                 className="form-control"
                 id="PriceMensual"
+                value={PriceMensual}
+                onChange={(e) => setPriceMensual(e.target.value)}
                 name="PriceMensual"
-                onChange={handleChange}
-                value={formData.PriceMensual}
                 placeholder="Ingrese el precio del inmueble"
               />
             </div>
             <div className="form-group">
-              <label htmlFor="price">Porcentaje de la comisión </label>
+              <label htmlFor="PorcentajeComision">Porcentaje de la comisión</label>
               <input
                 type="text"
                 className="form-control"
                 id="PorcentajeComision"
                 name="PorcentajeComision"
-                onChange={handleChange}
-                value={formData.PorcentajeComision}
+                value={PorcentajeComision}
+                onChange={(e) => setPorcentajeComision(e.target.value)}
                 placeholder="Ingrese la comisión para la empresa"
               />
             </div>
             <div className="container-fluid">
-              <label htmlFor="comisionDate">Cuando cobrar la comisión</label>
+              <label htmlFor="FechaDeComision">Cuando cobrar la comisión</label>
               <input
                 type="date"
                 className="form-control"
+                value={FechaDeComision}
+                onChange={(e) => setFechaDeComision(e.target.value)}
                 id="FechaDeComision"
                 name="FechaDeComision"
-                onChange={handleChange}
-                value={formData.FechaDeComision}
               />
             </div>
             <div className="container-fluid">
-              <label htmlFor="property">Fecha de inicio</label>
+              <label htmlFor="FechaInicio">Fecha de inicio</label>
               <input
                 type="date"
                 className="form-control"
                 id="FechaInicio"
                 name="FechaInicio"
-                onChange={handleChange}
-                value={formData.FechaInicio}
+                value={FechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
                 placeholder="Ingrese la fecha de inicio "
               />
             </div>
             <div className="container-fluid">
-              <label htmlFor="end_date">Fecha de finalización</label>
+              <label htmlFor="FechaFinalizacion">Fecha de finalización</label>
               <input
                 type="date"
                 className="form-control"
+                value={FechaFinalizacion}
+                onChange={(e) => setFechaFinalizacion(e.target.value)}
                 id="FechaFinalizacion"
                 name="FechaFinalizacion"
-                onChange={handleChange}
-                value={formData.FechaFinalizacion}
                 placeholder="Ingrese la fecha de finalización"
               />
             </div>
-
             <div className="form-group">
               <label htmlFor="notes">Notas</label>
               <textarea
                 className="form-control"
                 id="notes"
+                name="notes"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
                 rows="3"
                 placeholder="Ingrese las observaciones"
               ></textarea>

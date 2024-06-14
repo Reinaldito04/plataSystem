@@ -1,27 +1,54 @@
 import './styles/BarSearchImmuebles.css'
-import { CiSearch } from 'react-icons/ci'
+import InmuebleAutocomplete from './AutoCompletedArriendo'
+import axiosInstance from '../utils/BackendConfig'
+import { useState, useEffect } from 'react'
+
 function BarSearchImmuebles() {
+  const [descripcion, setDescription] = useState('')
+  const [ubicacion, setUbicacion] = useState('')
+  const [tipo, setTipo] = useState('')
+  const [selectedInmueble, setSelectedInmueble] = useState('')
+  const [propietario, setPropietario] = useState('')
+  const [inquilino, setInquilino] = useState('')
+  const [imagenData, setImagenData] = useState([])
+
+  const handleInmuebleSelect = (inmueble) => {
+    setSelectedInmueble(inmueble)
+  }
+  const buscarInmueble = () => {
+    console.log(selectedInmueble)
+    setDescription(selectedInmueble.Descripcion)
+    setUbicacion(selectedInmueble.Direccion)
+    setTipo(selectedInmueble.Tipo)
+    const Propietario = `${selectedInmueble.NombrePropietario} ${selectedInmueble.ApellidoPropietario}`
+    setPropietario(Propietario)
+    setInquilino(selectedInmueble.NombreInquilino)
+    setImagenData(selectedInmueble.Imagenes)
+  }
   return (
     <div className="sidebarImmuebles">
       <h4 className="text-center">Buscar Inmuebles</h4>
       <div className="container">
-        <input className="inputBusqueda" type="text" placeholder="Buscar..." />
-        <button className="btn  searchBoton text-center mx-auto">
-          {' '}
-          <CiSearch className="searchIcon" />{' '}
-        </button>
+        <InmuebleAutocomplete onSelect={handleInmuebleSelect} />
+        <button onClick={buscarInmueble}>Buscar</button>
       </div>
 
       <p>Descripción :</p>
-      <input readOnly type="text" placeholder="Descripción..." />
+      <input readOnly type="text" placeholder="Descripción..." value={descripcion} />
       <p>Ubicación :</p>
-      <input readOnly type="text" placeholder="Ubicación..." />
+      <input readOnly type="text" placeholder="Ubicación..." value={ubicacion} />
       <p>Tipo de inmueble :</p>
-      <input readOnly type="text" placeholder="Tipo de inmueble..." />
+      <input readOnly type="text" placeholder="Tipo de inmueble..." value={tipo} />
       <p>Propietario</p>
-      <input readOnly type="text" placeholder="Propietario..." />
+      <input readOnly type="text" placeholder="Propietario..." value={propietario} />
       <p>Inquilino</p>
-      <input readOnly type="text" placeholder="Inquilino..." />
+      <input readOnly type="text" placeholder="Inquilino..." value={inquilino} />
+      <div className="container-imagenes">
+        <p>Imagenes</p>
+        <div className="contenedorimagenes">
+          <p className="textoImagen">{imagenData.length}</p>
+        </div>
+      </div>
       <div className="container text-center mx-auto">
         <button className="btn btn-primary text-center mx-auto">Ver Información</button>
       </div>

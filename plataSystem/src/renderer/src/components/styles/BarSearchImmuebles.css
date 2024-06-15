@@ -57,15 +57,17 @@
   }
   
 .contenedorimagenes{
-  background-color: blue;
+background-color: rgba(0, 0, 0, 0.2);
   height: 80px;
   margin: 0 auto;
   border-radius: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   width: 80px;
 }
 .textoImagen{
+  position: absolute;
   font-size: 40px;
 }

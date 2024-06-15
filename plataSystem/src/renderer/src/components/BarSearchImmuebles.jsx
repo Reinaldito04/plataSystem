@@ -3,7 +3,8 @@ import InmuebleAutocomplete from './AutoCompletedArriendo'
 import { useState } from 'react'
 import Modal from 'react-modal'
 import './styles/AddArriendo.css'
-import ruta from './utils/RutaBackend'
+
+import ruta from '../utils/RutaBackend'
 
 function BarSearchImmuebles() {
   const [descripcion, setDescription] = useState('')
@@ -37,7 +38,9 @@ function BarSearchImmuebles() {
         <h4 className="text-center">Buscar Inmuebles</h4>
         <div className="container">
           <InmuebleAutocomplete onSelect={handleInmuebleSelect} />
-          <button onClick={buscarInmueble}>Buscar</button>
+          <button className="btn " onClick={buscarInmueble}>
+            Buscar
+          </button>
         </div>
 
         <p>Descripción :</p>

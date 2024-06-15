@@ -1,20 +1,48 @@
+import React, { useState } from 'react'
 import Layout from '../components/SideBarLayout'
 import ReusableCard from '../components/CardWelcome'
+import PagosInquilinos from '../components/PagosInquilinos'
+
 function Pagos() {
+  const [activeCard, setActiveCard] = useState('') // Estado para la tarjeta activa
+  const [optionsUsers, setOptionsUsers] = useState('') // Estado para las opciones de usuario
+
+  const handleCardClick = (card) => {
+    setActiveCard(card)
+    setOptionsUsers('') // Resetear las opciones de usuario al cambiar de tarjeta
+  }
+
+  const renderOptionsContent = () => {
+    switch (activeCard) {
+      case 'Inquilinos':
+        return <PagosInquilinos />
+      case 'Empresa':
+        return <p>Contenido para pagos de empresa aquí</p>
+      case 'Servicios':
+        return <p>Contenido para pagos de servicios aquí</p>
+      case 'Contratos':
+        return <p>Contenido para contratos aquí</p>
+      default:
+        return null
+    }
+  }
+
   return (
     <Layout>
       <h3 className="text-center">Pagos</h3>
       <div className="container row mt-5">
         <div className="col-md-6">
           <ReusableCard
+            fuction={() => handleCardClick('Inquilinos')}
             title="Pagos por inquilinos"
-            text="Pagos de inquilinos hacia la empresa "
+            text="Pagos de inquilinos hacia la empresa"
             bgColor="rgb(116, 155, 194)"
             textColor="text-white"
           />
         </div>
         <div className="col-md-6">
           <ReusableCard
+            fuction={() => handleCardClick('Empresa')}
             title="Pagos de empresa"
             text="Pagos de empresa hacia propietarios"
             bgColor="rgb(70, 130, 169)"
@@ -24,20 +52,23 @@ function Pagos() {
 
         <div className="col-md-6 mt-2">
           <ReusableCard
+            fuction={() => handleCardClick('Servicios')}
             title="Pagos de servicios"
-            text="Pagos de servicios o cualquier otro tipo (remodelación,etc)"
+            text="Pagos de servicios o cualquier otro tipo (remodelación, etc)"
             bgColor="rgb(70, 130, 169)"
             textColor="text-white"
           />
         </div>
         <div className="col-md-6 mt-2">
           <ReusableCard
-            title="Contratos "
+            fuction={() => handleCardClick('Contratos')}
+            title="Contratos"
             text="Contratos de propietarios e inquilinos"
             bgColor="rgb(116, 155, 194)"
             textColor="text-white"
           />
         </div>
+        <div className="container mt-3">{renderOptionsContent()}</div>
       </div>
     </Layout>
   )

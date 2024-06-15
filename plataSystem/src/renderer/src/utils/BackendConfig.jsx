@@ -1,10 +1,10 @@
 // src/utils/axiosConfig.js
-
+import ruta from './RutaBackend'
 import axios from 'axios'
 
 // Crear una instancia de axios con configuración personalizada
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8000', // Reemplaza con la URL base de tu API
+  baseURL: ruta, // Reemplaza con la URL base de tu API
   headers: {
     'Content-Type': 'application/json'
   }

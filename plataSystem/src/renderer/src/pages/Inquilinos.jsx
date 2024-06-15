@@ -11,9 +11,6 @@ function Inquilinos() {
       <div className="container-fluid">
         <TableInquilinos />
       </div>
-      <div className="container d-flex">
-        <AddInquilino />
-      </div>
     </Layout>
   )
 }

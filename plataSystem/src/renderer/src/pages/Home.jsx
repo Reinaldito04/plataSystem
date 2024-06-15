@@ -2,10 +2,20 @@ import Layout from '../components/SideBarLayout'
 import ReusableCard from '../components/CardWelcome'
 import logo from '../assets/Images/logo.png'
 import './styles/Home.css'
+import { useState, useEffect } from 'react'
 function Home() {
+  const [user, setUser] = useState('')
+  const localstorageUSer = async () => {
+    const user = localStorage.getItem('username')
+    setUser(user)
+  }
+  useEffect(() => {
+    localstorageUSer()
+  }, [])
+
   return (
     <Layout>
-      <h3 className="text-center">Bienvenido a Inmoplata</h3>
+      <h3 className="text-center">Bienvenido a Inmoplata, {user}</h3>
       <div className="container mt-5">
         <div className="row container">
           <div className="col-md-6">

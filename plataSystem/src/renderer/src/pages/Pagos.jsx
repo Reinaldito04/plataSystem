@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Layout from '../components/SideBarLayout'
 import ReusableCard from '../components/CardWelcome'
 import PagosInquilinos from '../components/PagosInquilinos'
@@ -15,9 +15,9 @@ function Pagos() {
   const renderOptionsContent = () => {
     switch (activeCard) {
       case 'Inquilinos':
-        return <PagosInquilinos />
+        return <PagosInquilinos Tipo="Empresa" />
       case 'Empresa':
-        return <p>Contenido para pagos de empresa aquí</p>
+        return <PagosInquilinos Tipo="Personal" />
       case 'Servicios':
         return <p>Contenido para pagos de servicios aquí</p>
       case 'Contratos':

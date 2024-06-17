@@ -32,7 +32,7 @@ function AddImmuebles() {
     const dataToSend = {
       ...formData,
       CedulaPropietario: autocompleteValue,
-      notas: notes
+      Descripcion: notes
     }
 
     if (formData.Direccion == '') {
@@ -52,6 +52,7 @@ function AddImmuebles() {
         setTimeout(() => {
           setModalIsOpen(false)
           setAlertMessage(null)
+          window.location.reload()
         }, 2000)
       } catch (error) {
         console.error('Error al enviar el formulario:', error)
@@ -125,7 +126,7 @@ function AddImmuebles() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="notes">Notas</label>
+              <label htmlFor="notes">Descripción</label>
               <textarea className="form-control" id="notes" name="notes" rows="3"></textarea>
             </div>
 

@@ -27,7 +27,7 @@ function BarSearchImmuebles() {
       setTipo(selectedInmueble.Tipo)
       const Propietario = `${selectedInmueble.NombrePropietario} ${selectedInmueble.ApellidoPropietario}`
       setPropietario(Propietario)
-      setInquilino(selectedInmueble.NombreInquilino)
+      setInquilino(`${selectedInmueble.NombreInquilino} ${selectedInmueble.ApellidoInquilino}`)
       setImagenData(selectedInmueble.Imagenes)
     }
   }

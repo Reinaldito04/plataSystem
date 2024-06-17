@@ -1,96 +1,87 @@
 import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
 import axiosInstance from '../utils/BackendConfig'
-
 import ContractAutoComplect from './AutoCompletedContract'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 import Modal from 'react-modal'
 import './styles/AddArriendo.css'
+import PropTypes from 'prop-types'
+
 const columns = [
   {
     name: 'ID',
-    selector: (row) => row.id,
+    selector: (row) => row.ID,
     sortable: true,
     cell: (row) => (
-      <Tippy content={row.id}>
-        <div>{row.id}</div>
+      <Tippy content={row.ID}>
+        <div>{row.ID}</div>
       </Tippy>
     )
   },
   {
     name: 'Nombre',
-    selector: (row) => row.name,
+    selector: (row) => row.Name,
     sortable: true,
     cell: (row) => (
-      <Tippy content={row.name}>
-        <div>{row.name}</div>
+      <Tippy content={row.Name}>
+        <div>{row.Name}</div>
       </Tippy>
     )
   },
   {
     name: 'Apellido',
-    selector: (row) => row.lastName,
+    selector: (row) => row.Lastname,
     sortable: true,
     cell: (row) => (
-      <Tippy content={row.lastName}>
-        <div>{row.lastName}</div>
+      <Tippy content={row.Lastname}>
+        <div>{row.Lastname}</div>
       </Tippy>
     )
   },
   {
     name: 'DNI',
-    selector: (row) => row.dni,
+    selector: (row) => row.DNI,
     sortable: true,
     cell: (row) => (
-      <Tippy content={row.dni}>
-        <div>{row.dni}</div>
+      <Tippy content={row.DNI}>
+        <div>{row.DNI}</div>
       </Tippy>
     )
   },
   {
-    name: 'RIF',
-    selector: (row) => row.rif,
+    name: 'Monto',
+    selector: (row) => row.Amount,
     sortable: true,
     cell: (row) => (
-      <Tippy content={row.rif}>
-        <div>{row.rif}</div>
+      <Tippy content={row.Amount}>
+        <div>{row.Amount}</div>
       </Tippy>
     )
   },
   {
-    name: 'Fecha de Nacimiento',
-    selector: (row) => row.birthdate,
+    name: 'Fecha',
+    selector: (row) => row.Date,
     sortable: true,
     cell: (row) => (
-      <Tippy content={row.birthdate}>
-        <div>{row.birthdate}</div>
+      <Tippy content={row.Date}>
+        <div>{row.Date}</div>
       </Tippy>
     )
   },
   {
-    name: 'Teléfono',
-    selector: (row) => row.phone,
+    name: 'ID del contrato',
+    selector: (row) => row.IdContract,
     sortable: true,
     cell: (row) => (
-      <Tippy content={row.phone}>
-        <div>{row.phone}</div>
-      </Tippy>
-    )
-  },
-  {
-    name: 'Email',
-    selector: (row) => row.email,
-    sortable: true,
-    cell: (row) => (
-      <Tippy content={row.email}>
-        <div>{row.email}</div>
+      <Tippy content={row.IdContract}>
+        <div>{row.IdContract}</div>
       </Tippy>
     )
   }
 ]
 
-function TablePagosInquilinos() {
+function TablePagosInquilinos({ Tipo }) {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -98,10 +89,11 @@ function TablePagosInquilinos() {
   const [contrato, setContrato] = useState(null)
   const [monto, setMonto] = useState('')
   const [fecha, setFecha] = useState('')
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get('/getInquilinos')
+        const response = await axiosInstance.get(`getPays?type=${Tipo}`)
         setData(response.data)
       } catch (err) {
         setError(err.message)
@@ -111,35 +103,37 @@ function TablePagosInquilinos() {
     }
 
     fetchData()
-  }, [])
+  }, [Tipo])
+
   const handlePagoSubmit = async (event) => {
     event.preventDefault()
     try {
       const payload = {
-        IdContract: contrato.ContratoID,
+        IdContract: contrato?.ContratoID,
         Date: fecha,
         Amount: monto,
-        PaymentType: 'Empresa' // Cambiar según sea necesario
+        PaymentType: Tipo
       }
       const response = await axiosInstance.post('/PayRental', payload)
       console.log('Pago registrado exitosamente:', response.data)
-      alert('Pago registrado exitosamente') // Mostrar alerta de éxito
-      setModalIsOpen(false) // Cerrar el modal
-      setFecha(null)
-      setMonto(null)
+      alert('Pago registrado exitosamente')
+      setModalIsOpen(false)
+      setFecha('')
+      setMonto('')
       setContrato(null)
     } catch (error) {
       console.error('Error al registrar el pago:', error)
-      alert('Error al registrar el pago') // Mostrar alerta de error
-      // Manejo de errores, mostrar mensaje al usuario, etc.
+      alert('Error al registrar el pago')
     }
   }
 
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error: {error}</p>
+
   const handleContratoSelect = (inmueble) => {
     setContrato(inmueble)
   }
+
   return (
     <>
       <div className="container-boton">
@@ -177,7 +171,7 @@ function TablePagosInquilinos() {
         <div className="modal-content">
           <h2 className="text-center">Añadir Pago</h2>
           <form onSubmit={handlePagoSubmit}>
-            <div className="justify-content-center align-center  mx-auto">
+            <div className="justify-content-center align-center mx-auto">
               <ContractAutoComplect onSelect={handleContratoSelect} />
             </div>
             <div className="form-group">
@@ -210,6 +204,10 @@ function TablePagosInquilinos() {
       </Modal>
     </>
   )
+}
+
+TablePagosInquilinos.propTypes = {
+  Tipo: PropTypes.string.isRequired
 }
 
 export default TablePagosInquilinos

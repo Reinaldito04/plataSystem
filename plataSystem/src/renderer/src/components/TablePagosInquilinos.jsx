@@ -90,21 +90,19 @@ function TablePagosInquilinos({ Tipo }) {
   const [monto, setMonto] = useState('')
   const [fecha, setFecha] = useState('')
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get(`getPays?type=${Tipo}`)
-        setData(response.data)
-      } catch (err) {
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get(`getPays?type=${Tipo}`)
+      setData(response.data)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
     }
-
+  }
+  useEffect(() => {
     fetchData()
-  }, [Tipo])
-
+  }, [Tipo, fetchData])
   const handlePagoSubmit = async (event) => {
     event.preventDefault()
     try {
@@ -116,11 +114,24 @@ function TablePagosInquilinos({ Tipo }) {
       }
       const response = await axiosInstance.post('/PayRental', payload)
       console.log('Pago registrado exitosamente:', response.data)
-      alert('Pago registrado exitosamente')
+
+      // Extraer información de la respuesta
+      const { message, status, deuda_pendiente } = response.data
+
+      // Crear mensaje personalizado para la alerta
+      let alertMessage = `${message}\nEstado: ${status}`
+      if (deuda_pendiente > 0) {
+        alertMessage += `\nDeuda pendiente: ${deuda_pendiente}`
+      }
+
+      // Mostrar alerta con la información del pago
+      alert(alertMessage)
+
       setModalIsOpen(false)
       setFecha('')
       setMonto('')
       setContrato(null)
+      fetchData()
     } catch (error) {
       console.error('Error al registrar el pago:', error)
       alert('Error al registrar el pago')

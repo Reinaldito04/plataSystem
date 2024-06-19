@@ -45,7 +45,7 @@ function BarSearchImmuebles() {
 
         <p>Descripción :</p>
         <input readOnly type="text" placeholder="Descripción..." value={descripcion} />
-        <p>Ubicación :</p>
+        <p>Nombre :</p>
         <input readOnly type="text" placeholder="Ubicación..." value={ubicacion} />
         <p>Tipo de inmueble :</p>
         <input readOnly type="text" placeholder="Tipo de inmueble..." value={tipo} />

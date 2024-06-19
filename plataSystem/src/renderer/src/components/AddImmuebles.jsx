@@ -9,7 +9,8 @@ function AddImmuebles() {
   const [autocompleteValue, setAutocompleteValue] = useState('')
   const [formData, setFormData] = useState({
     Direccion: '',
-    Tipo: ''
+    Tipo: '',
+    Municipio: ''
   })
   const [alertMessage, setAlertMessage] = useState(null)
 
@@ -39,6 +40,8 @@ function AddImmuebles() {
       alert('Se necesita agregar la ubicación del inmueble')
     } else if (formData.Tipo == '') {
       alert('Se necesita agregar el tipo del inmueble')
+    } else if (formData.Municipio == '') {
+      alert('Se necesita agregar el municipio del inmueble')
     } else if (autocompleteValue == '') {
       alert('Se necesita agregar el propietario')
     } else {
@@ -103,13 +106,24 @@ function AddImmuebles() {
             />
 
             <div className="form-group">
-              <label>Ubicación</label>
+              <label>Nombre</label>
               <input
                 type="text"
                 className="form-control"
                 id="location"
                 name="Direccion"
-                placeholder="Ubicación"
+                placeholder="Nombre"
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="location">Municipio y Estado</label>
+              <input
+                type="text"
+                className="form-control"
+                id="Municipio"
+                name="Municipio"
+                placeholder="Municipio - Estado (en este formato)"
                 onChange={handleChange}
               />
             </div>

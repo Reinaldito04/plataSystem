@@ -28,6 +28,18 @@ const columns = [
     filterable: true // Habilita el filtro para esta columna
   },
   {
+    name: 'Deuda Restante',
+    selector: (row) => row.DeudaRestante,
+    sortable: true,
+    filterable: true
+  },
+  {
+    name: 'Monto total',
+    selector: (row) => row.Monto,
+    sortable: true,
+    filterable: true
+  },
+  {
     name: 'Siguiente Pago',
     selector: (row) => row.SiguientePago,
     sortable: true,
@@ -56,7 +68,14 @@ function CuotasPorVencer() {
   return (
     <>
       <h3 className="text-center">Cuotas Por Vencer</h3>
-      <DataTable columns={columns} data={data} pagination />
+      <div
+        style={{
+          width: '800px',
+          overflowY: 'auto'
+        }}
+      >
+        <DataTable columns={columns} data={data} pagination />
+      </div>
     </>
   )
 }

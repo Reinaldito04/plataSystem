@@ -18,8 +18,13 @@ const columns = [
     sortable: true
   },
   {
-    name: 'Direccion',
+    name: 'Nombre',
     selector: (row) => row.Direccion,
+    sortable: true
+  },
+  {
+    name: 'Ubicacion',
+    selector: (row) => row.Municipio,
     sortable: true
   },
   {

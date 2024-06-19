@@ -74,7 +74,9 @@ function InmuebleAutocomplete({ onSelect }) {
               <br />
               Cédula: {inmueble.CedulaPropietario}
               <br />
-              Dirección: {inmueble.Direccion}
+              Inmueble: {inmueble.Direccion}
+              <br />
+              Ubicacion : {inmueble.Municipio}
             </li>
           ))}
         </ul>

@@ -52,6 +52,12 @@ function Sidebar() {
             <span>Pagos</span>
           </Link>
         </li>
+        <li>
+          <Link to="/Formats" className="sidebar-link">
+            <i className="fas fa-users"></i>
+            <span>Formatos</span>
+          </Link>
+        </li>
         {tipoUser === 'admin' && (
           <li className="userLink">
             <Link to="/Users" className="sidebar-link userLink">

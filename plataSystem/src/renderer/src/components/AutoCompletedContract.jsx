@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './styles/Autocomplete.css'
 import PropTypes from 'prop-types'
 import axiosInstance from '../utils/BackendConfig'
@@ -7,6 +7,9 @@ function ContractAutoComplect({ onSelect }) {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [inputText, setInputText] = useState('')
+  const [filteredInmuebles, setFilteredInmuebles] = useState([])
+  const containerRef = useRef(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,9 +25,6 @@ function ContractAutoComplect({ onSelect }) {
 
     fetchData()
   }, [])
-
-  const [inputText, setInputText] = useState('')
-  const [filteredInmuebles, setFilteredInmuebles] = useState([])
 
   useEffect(() => {
     if (inputText.length > 0) {
@@ -44,6 +44,19 @@ function ContractAutoComplect({ onSelect }) {
     }
   }, [inputText, data])
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setFilteredInmuebles([])
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
   const handleChange = (e) => {
     setInputText(e.target.value)
   }
@@ -58,7 +71,7 @@ function ContractAutoComplect({ onSelect }) {
   }
 
   return (
-    <div className="autocomplete-container ">
+    <div className="autocomplete-container" ref={containerRef}>
       <label>Información del contrato</label>
       <input
         type="text"
@@ -66,11 +79,16 @@ function ContractAutoComplect({ onSelect }) {
         placeholder="Ingrese la dirección o el nombre del propietario"
         value={inputText}
         onChange={handleChange}
+        onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()} // Evita el submit del form
       />
       {filteredInmuebles.length > 0 && (
         <ul className="autocomplete-results">
           {filteredInmuebles.map((inmueble, index) => (
-            <li key={index} className="autocomplete-item" onClick={() => handleSelect(inmueble)}>
+            <li
+              key={index}
+              className="autocomplete-item"
+              onMouseDown={() => handleSelect(inmueble)}
+            >
               <b>Propietario :</b>
               <br />
               Nombre: {inmueble.PropietarioNombre}

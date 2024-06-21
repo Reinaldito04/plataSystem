@@ -123,7 +123,7 @@ function FormatNotificacionCondominio() {
 
   return (
     <div className="container-fluid">
-      <p className="text-center">Generar Documento para notificaciones de Condominio</p>
+      <h2 className="text-center">Generar Documento para notificaciones de Condominio</h2>
       <div className="form-group">
         <form onSubmit={handleSubmit}>
           <div className="form-group">

@@ -1,0 +1,16 @@
+.separator{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    height: 5px;
+    background-color: gray;
+    border-radius: 25px;
+
+
+
+}

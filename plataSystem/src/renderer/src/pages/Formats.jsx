@@ -3,6 +3,7 @@ import ReusableCard from '../components/CardWelcome'
 import { useState } from 'react'
 import FormatNotificacionCondominio from '../components/FormatNotificacionCondominio'
 import FormatNotificacionVehiculos from '../components/FormatNotificacionVehiculos'
+import FormartInquilino from '../components/FormartInquilino'
 function Formats() {
   const [activeCard, setActiveCard] = useState('') // Estado para la tarjeta activa
   const handleCardClick = (card) => {
@@ -15,10 +16,8 @@ function Formats() {
         return <FormatNotificacionCondominio />
       case 'Vehiculos':
         return <FormatNotificacionVehiculos />
-      case 'Servicios':
-        return <p>Contenido para pagos de servicios aquí</p>
-      case 'Contratos':
-        return <p>Contenido para contratos aquí</p>
+      case 'Inquilino':
+        return <FormartInquilino />
       default:
         return null
     }
@@ -43,6 +42,15 @@ function Formats() {
             bgColor="rgb(70, 130, 169)"
             textColor="text-white"
             fuction={() => handleCardClick('Vehiculos')}
+          />
+        </div>
+        <div className="col-md-6">
+          <ReusableCard
+            title="Formato de registro de inquilino"
+            text="Formato para registrar inquilino y demás información "
+            bgColor="rgb(70, 130, 169)"
+            textColor="text-white"
+            fuction={() => handleCardClick('Inquilino')}
           />
         </div>
       </div>

@@ -3,6 +3,7 @@ import InmuebleAutocomplete from './AutoCompletedArriendo'
 import { useState } from 'react'
 import Modal from 'react-modal'
 import './styles/AddArriendo.css'
+import CustomModal from './ModalInmueble'
 
 import ruta from '../utils/RutaBackend'
 
@@ -15,6 +16,9 @@ function BarSearchImmuebles() {
   const [inquilino, setInquilino] = useState('')
   const [imagenData, setImagenData] = useState([])
   const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [modalIsOpen2, setModalIsOpen2] = useState(false)
+  const [selectedRow, setSelectedRow] = useState(null)
+  const [selectedOption, setSelectedOption] = useState('') // Estado para la opción seleccionada
 
   const handleInmuebleSelect = (inmueble) => {
     setSelectedInmueble(inmueble)
@@ -64,7 +68,12 @@ function BarSearchImmuebles() {
           </div>
         </div>
         <div className="container text-center mx-auto">
-          <button className="btn btn-primary text-center mx-auto">Ver Información</button>
+          <button
+            className="btn btn-primary text-center mx-auto"
+            onClick={() => setModalIsOpen2(true)}
+          >
+            Ver Opciones
+          </button>
         </div>
       </div>
 
@@ -96,6 +105,14 @@ function BarSearchImmuebles() {
           </div>
         </div>
       </Modal>
+
+      <CustomModal
+        isOpen={modalIsOpen2}
+        onRequestClose={() => setModalIsOpen2(false)}
+        selectedRow={selectedInmueble}
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
+      />
     </>
   )
 }

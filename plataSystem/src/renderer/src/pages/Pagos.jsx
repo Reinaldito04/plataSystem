@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Layout from '../components/SideBarLayout'
 import ReusableCard from '../components/CardWelcome'
 import PagosInquilinos from '../components/PagosInquilinos'
-
+import PagosServicios from '../components/PagosServicios'
 function Pagos() {
   const [activeCard, setActiveCard] = useState('') // Estado para la tarjeta activa
   const [optionsUsers, setOptionsUsers] = useState('') // Estado para las opciones de usuario
@@ -19,7 +19,14 @@ function Pagos() {
       case 'Empresa':
         return <PagosInquilinos Tipo="Personal" />
       case 'Servicios':
-        return <p>Contenido para pagos de servicios aquí</p>
+        return (
+          <div>
+            <p className="text-center">Pagos de Servicios</p>
+            <div className="container-fluid">
+              <PagosServicios />
+            </div>
+          </div>
+        )
       case 'Contratos':
         return <p>Contenido para contratos aquí</p>
       default:

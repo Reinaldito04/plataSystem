@@ -1,8 +1,6 @@
 import Layout from '../components/SideBarLayout'
 
 import TableInquilinos from '../components/TableInquilinos'
-import AddInquilino from '../components/AddInquilino'
-
 function Inquilinos() {
   return (
     <Layout>

@@ -27,8 +27,12 @@ function Pagos() {
             </div>
           </div>
         )
-      case 'Contratos':
-        return <p>Contenido para contratos aquí</p>
+      case 'GestionCobro':
+        return (
+          <div className="text-center">
+            <p className="text-center">Gestion de Cobro</p>
+          </div>
+        )
       default:
         return null
     }
@@ -68,9 +72,9 @@ function Pagos() {
         </div>
         <div className="col-md-6 mt-2">
           <ReusableCard
-            fuction={() => handleCardClick('Contratos')}
-            title="Contratos"
-            text="Contratos de propietarios e inquilinos"
+            fuction={() => handleCardClick('GestionCobro')}
+            title="Gestion de Cobro"
+            text="Pagos propuestos (comprometidos)"
             bgColor="rgb(116, 155, 194)"
             textColor="text-white"
           />

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 import './styles/AddArriendo.css'
 import InmuebleAutocomplete from './AutoCompletedArriendo'
@@ -6,6 +6,7 @@ import axiosInstance from '../utils/BackendConfig'
 
 function AddArriendo() {
   const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [commissionModalIsOpen, setCommissionModalIsOpen] = useState(false)
   const [selectedInmueble, setSelectedInmueble] = useState(null)
   const [inquilinoName, setInquilinoName] = useState('')
   const [InquilinoLastName, setInquilinoLastName] = useState('')
@@ -19,17 +20,26 @@ function AddArriendo() {
   const [FechaDeComision, setFechaDeComision] = useState('')
   const [FechaInicio, setFechaInicio] = useState('')
   const [FechaFinalizacion, setFechaFinalizacion] = useState('')
-  const [notes, setNotes] = useState('')
+  const [commissionDates, setCommissionDates] = useState([])
+
   const handleInmuebleSelect = (inmueble) => {
     setSelectedInmueble(inmueble)
   }
+
+  const handleAddCommissionDate = (date) => {
+    setCommissionDates([...commissionDates, date])
+    setCommissionModalIsOpen(false)
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    // Construye la información del inmueble seleccionado o vacío si no hay uno seleccionado
     const inmuebleData = selectedInmueble
       ? `${selectedInmueble.CedulaPropietario} --- ${selectedInmueble.Direccion}`
       : ''
 
+    // Construye el objeto de datos a enviar al backend
     const data = {
       InquilinoName: inquilinoName,
       InquilinoLastName: InquilinoLastName,
@@ -43,22 +53,59 @@ function AddArriendo() {
       PorcentajeComision: PorcentajeComision,
       FechaDeComision: FechaDeComision,
       FechaInicio: FechaInicio,
-      FechaFinalizacion: FechaFinalizacion
+      FechaFinalizacion: FechaFinalizacion,
+      comisiones: commissionDates // Asumiendo que commissionDates es una lista válida de fechas
     }
 
+    // Console logs para verificar los datos antes de enviar la solicitud
+    console.log('Data a enviar:', data)
+    console.log('Fechas de comisiones:', commissionDates)
+
     try {
+      // Realiza la solicitud POST al endpoint /addContract
       const response = await axiosInstance.post('/addContract', data)
       console.log('Response status:', response.status)
       console.log('Response data:', response.data)
+
+      // Muestra una alerta al usuario indicando que el arriendo se agregó exitosamente
       alert('Arriendo agregado exitosamente!')
+
+      // Cierra el modal después de agregar exitosamente el arriendo
       setModalIsOpen(false)
     } catch (error) {
-      console.error('There was an error!', error)
-      console.error('Response status:', error.response?.status)
-      console.error('Response headers:', error.response?.headers)
+      // Manejo de errores si la solicitud falla
+      console.error('Ocurrió un error!', error)
+      console.error('Status de respuesta:', error.response?.status)
+      console.error('Headers de respuesta:', error.response?.headers)
+
+      // Muestra una alerta al usuario indicando que hubo un error al agregar el arriendo
       alert('Hubo un error al agregar el arriendo.')
     }
   }
+  const clear = () => {
+    setCommissionModalIsOpen(false)
+    setInquilinoName('')
+    setInquilinoLastName('')
+    setInquilinoDNI('')
+    setInquilinoRIF('')
+    setInquilinoBirthday('')
+    setTelefono('')
+    setInquilinoMail('')
+    setPriceMensual('')
+    setPorcentajeComision('')
+    setFechaDeComision('')
+    setFechaInicio('')
+    setFechaFinalizacion('')
+    setSelectedInmueble(null)
+    setCommissionDates([])
+  }
+
+  useEffect(() => {
+    if (modalIsOpen == false) {
+      setModalIsOpen(false)
+      clear()
+    }
+  }, [modalIsOpen])
 
   return (
     <>
@@ -73,7 +120,7 @@ function AddArriendo() {
         overlayClassName="custom-overlay"
         isOpen={modalIsOpen}
         onRequestClose={() => setModalIsOpen(false)}
-        contentLabel="Ejemplo de Modal"
+        contentLabel="Añadir Arriendo"
       >
         <div className="container-botonmodal">
           <button className="closeModal" onClick={() => setModalIsOpen(false)}>
@@ -197,7 +244,7 @@ function AddArriendo() {
               />
             </div>
             <div className="container-fluid">
-              <label htmlFor="FechaDeComision">Cuando cobrar la comisión</label>
+              <label htmlFor="FechaDeComision">Primer Pago</label>
               <input
                 type="date"
                 className="form-control"
@@ -231,20 +278,75 @@ function AddArriendo() {
                 placeholder="Ingrese la fecha de finalización"
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="notes">Notas</label>
-              <textarea
-                className="form-control"
-                id="notes"
-                name="notes"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows="3"
-                placeholder="Ingrese las observaciones"
-              ></textarea>
+            <div className="container-fluid mt-2 ">
+              <div className="d-flex mx-auto align-items-center justify-content-around">
+                <label htmlFor="CommissionDates ">Fechas de Comisiones</label>
+                <button
+                  type="button"
+                  className="btn btn-secondary mt-2 "
+                  onClick={() => setCommissionModalIsOpen(true)}
+                >
+                  Añadir Fechas de Comisión
+                </button>
+              </div>
+
+              <div className="container-fluid p-2">
+                <ul>
+                  {commissionDates.map((date, index) => (
+                    <li key={index}>{date}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
+            <div className="mx-auto d-flex justify-content-around">
+              <button type="submit" className="btn btn-primary">
+                Guardar
+              </button>
+              <button type="button" className="btn btn-secondary" onClick={() => clear()}>
+                Limpiar
+              </button>
+            </div>
+          </form>
+        </div>
+      </Modal>
+
+      <Modal
+        className="custom-modal modalCommission"
+        overlayClassName="custom-overlay"
+        isOpen={commissionModalIsOpen}
+        onRequestClose={() => setCommissionModalIsOpen(false)}
+        contentLabel="Añadir Fechas de Comisión"
+      >
+        <div className="container-botonmodal">
+          <button className="closeModal" onClick={() => setCommissionModalIsOpen(false)}>
+            X
+          </button>
+        </div>
+
+        <div className="modal-content">
+          <h2>Añadir Fecha de Comisión</h2>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              const commissionDate = e.target.elements.CommissionDate.value
+              if (commissionDate) {
+                handleAddCommissionDate(commissionDate)
+              }
+            }}
+          >
+            <div className="form-group">
+              <label htmlFor="CommissionDate">Fecha de Comisión</label>
+              <input
+                type="date"
+                className="form-control"
+                id="CommissionDate"
+                name="CommissionDate"
+                placeholder="Ingrese la fecha de la comisión"
+              />
+            </div>
+
             <button type="submit" className="btn btn-primary">
-              Guardar
+              Añadir
             </button>
           </form>
         </div>

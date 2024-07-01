@@ -7,8 +7,14 @@ import 'tippy.js/dist/tippy.css'
 import Modal from 'react-modal'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-
-const columns = (handlePrint, handleCancel, handleModal, tipoUser) => [
+import RenovarContrato from './RenovarContrato'
+const columns = (handlePrint, handleCancel, handleModal, tipoUser, openModal2) => [
+  {
+    name: 'ID del Contrato',
+    selector: (row) => row.ContratoID,
+    sortable: true,
+    filterable: true
+  },
   {
     name: 'Alquilado Por',
     selector: (row) => `${row.ClienteNombre} ${row.ClienteApellido}`,
@@ -79,14 +85,17 @@ const columns = (handlePrint, handleCancel, handleModal, tipoUser) => [
     name: 'Acciones',
     cell: (row) => (
       <div>
-        <button className="btn btn-primary" onClick={() => handlePrint(row)}>
+        <button className="btn btn-primary mt-1" onClick={() => handlePrint(row)}>
           Imprimir
         </button>
-        <button className="btn btn-success" onClick={() => handleModal(row)}>
+        <button className="btn btn-success mt-1" onClick={() => handleModal(row)}>
           Detalles
         </button>
+        <button className="btn btn-primary mt-1" onClick={() => openModal2(row)}>
+          Renovar
+        </button>
         {tipoUser === 'admin' && (
-          <button className="btn btn-danger" onClick={() => handleCancel(row)}>
+          <button className="btn btn-danger mt-1" onClick={() => handleCancel(row)}>
             Cancelar
           </button>
         )}
@@ -103,6 +112,8 @@ function TableArriendos() {
   const [data, setData] = useState([])
   const [error, setError] = useState('')
   const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [modalIsOpen2, setModalIsOpen2] = useState(false)
+
   const [detailsContrat, setDetailsContrat] = useState([])
   const [activeButton, setActiveButton] = useState('')
   const [detailsInmueble, setDetailsInmueble] = useState({
@@ -329,16 +340,30 @@ function TableArriendos() {
     setDetailsContrat(row)
   }
 
-  const filteredItems = data.filter(
-    (item) =>
-      item.ClienteNombre.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.ClienteApellido.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.PropietarioNombre.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.PropietarioApellido.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.InmuebleDireccion.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.FechaInicio.toLowerCase().includes(filterText.toLowerCase()) ||
-      item.FechaFin.toLowerCase().includes(filterText.toLowerCase())
-  )
+  const [selectedRow, setSelectedRow] = useState([])
+
+  const openModal2 = (row) => {
+    setSelectedRow(row)
+    setModalIsOpen2(true)
+  }
+
+  const closeModal2 = () => {
+    setModalIsOpen2(false)
+    setSelectedRow(null)
+  }
+
+  const filteredItems = data.filter((item) => {
+    const fullNameCliente = `${item.ClienteNombre} ${item.ClienteApellido}`.toLowerCase()
+    const fullNamePropietario =
+      `${item.PropietarioNombre} ${item.PropietarioApellido}`.toLowerCase()
+    return (
+      fullNameCliente.includes(filterText.toLowerCase()) ||
+      fullNamePropietario.includes(filterText.toLowerCase()) ||
+      item.InmuebleDireccion?.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.FechaInicio?.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.FechaFin?.toLowerCase().includes(filterText.toLowerCase())
+    )
+  })
 
   return (
     <>
@@ -352,7 +377,7 @@ function TableArriendos() {
       />
 
       <DataTable
-        columns={columns(handlePrint, handleCancel, handleModal, tipoUser)}
+        columns={columns(handlePrint, handleCancel, handleModal, tipoUser, openModal2)}
         data={filteredItems}
         pagination
       />
@@ -392,6 +417,8 @@ function TableArriendos() {
           <div className="mt-3">{renderOptionsContent()}</div>
         </div>
       </Modal>
+
+      <RenovarContrato Contrato={selectedRow} isOpen={modalIsOpen2} onRequestClose={closeModal2} />
     </>
   )
 }

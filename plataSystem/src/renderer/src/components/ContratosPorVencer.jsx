@@ -3,7 +3,8 @@ import DataTable from 'react-data-table-component'
 import axiosInstance from '../utils/BackendConfig'
 import RenovarContrato from './RenovarContrato'
 import './styles/AddArriendo.css'
-
+import Tippy from '@tippyjs/react'
+import 'tippy.js/dist/tippy.css'
 const ContratosPorVencer = () => {
   const [data, setData] = useState([])
   const [modalIsOpen, setModalIsOpen] = useState(false)
@@ -36,19 +37,48 @@ const ContratosPorVencer = () => {
       selector: (row) =>
         `${row.PropietarioNombre} ${row.PropietarioApellido} C.I: ${row.CedulaPropietario} `,
       sortable: true,
-      filterable: true
+      filterable: true,
+      cell: (row) => (
+        <Tippy
+          content={
+            <>
+              C.I : {row.CedulaPropietario} <br />
+              Telefono : {row.Telefono} <br />
+            </>
+          }
+        >
+          <div>{`${row.PropietarioNombre} ${row.PropietarioApellido}`}</div>
+        </Tippy>
+      )
     },
     {
       name: 'Cliente',
       selector: (row) => `${row.ClienteNombre} ${row.ClienteApellido} C.I : ${row.CedulaCliente} `,
       sortable: true,
-      filterable: true
+      filterable: true,
+      cell: (row) => (
+        <Tippy
+          content={
+            <>
+              C.I : {row.CedulaCliente} <br />
+              Telefono : {row.Telefono} <br />
+            </>
+          }
+        >
+          <div>{`${row.ClienteNombre} ${row.ClienteApellido}`}</div>
+        </Tippy>
+      )
     },
     {
       name: 'Inmueble Direccion',
       selector: (row) => row.InmuebleDireccion,
       sortable: true,
-      filterable: true
+      filterable: true,
+      cell: (row) => (
+        <Tippy content={row.Municipio}>
+          <div>{row.InmuebleDireccion}</div>
+        </Tippy>
+      )
     },
     {
       name: 'Fecha Inicio',

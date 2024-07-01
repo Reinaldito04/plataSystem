@@ -3,13 +3,12 @@ import Layout from '../components/SideBarLayout'
 import ReusableCard from '../components/CardWelcome'
 import PagosInquilinos from '../components/PagosInquilinos'
 import PagosServicios from '../components/PagosServicios'
+import PagosGestion from '../components/PagosGestion'
 function Pagos() {
   const [activeCard, setActiveCard] = useState('') // Estado para la tarjeta activa
-  const [optionsUsers, setOptionsUsers] = useState('') // Estado para las opciones de usuario
 
   const handleCardClick = (card) => {
     setActiveCard(card)
-    setOptionsUsers('') // Resetear las opciones de usuario al cambiar de tarjeta
   }
 
   const renderOptionsContent = () => {
@@ -29,8 +28,11 @@ function Pagos() {
         )
       case 'GestionCobro':
         return (
-          <div className="text-center">
+          <div className="">
             <p className="text-center">Gestion de Cobro</p>
+            <div className="container-fluid">
+              <PagosGestion />
+            </div>
           </div>
         )
       default:

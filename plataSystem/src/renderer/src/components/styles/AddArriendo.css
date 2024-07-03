@@ -36,4 +36,11 @@
     object-fit: cover;
     display: block;
   }
- 
+  .swal2-custom-popup {
+    position: absolute;
+    top: 0;
+    left: 0;
+  
+
+    z-index: 2000000px !important; /* Ajusta este valor según sea necesario */
+  }

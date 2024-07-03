@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import axiosInstance from '../utils/BackendConfig'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+
 import './styles/AddArriendo.css'
 
 const CustomModal = ({
@@ -18,11 +21,6 @@ const CustomModal = ({
   const handleEdit = () => {
     setSelectedOption('edit')
   }
-
-  const handleDelete = () => {
-    setSelectedOption('delete')
-  }
-
   const handleService = () => {
     setSelectedOption('service')
   }
@@ -45,6 +43,7 @@ const CustomModal = ({
       Monto: '',
       Notas: ''
     })
+
     const [dataService, setDataService] = useState([])
     const handleSubmit = async (e) => {
       e.preventDefault()
@@ -323,6 +322,48 @@ const CustomModal = ({
       </>
     )
   }
+  const MySwal = withReactContent(
+    Swal.mixin({
+      customClass: {
+        popup: 'swal2-custom-popup'
+      }
+    })
+  )
+
+  const handleCancel = async () => {
+    onRequestClose()
+    MySwal.fire({
+      title: '¿Estás seguro de eliminar este inmueble?',
+      text: 'Se eliminara toda información de este inmueble',
+      icon: 'warning',
+      showCancelButton: true,
+      position: 'center',
+
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, cancelar',
+      cancelButtonText: 'No, no cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosInstance
+          .delete(`/deleteInmueble/${selectedRow.ID}`)
+          .then((response) => {
+            console.log(response.data)
+            MySwal.fire({
+              title: 'Inmueble Eliminado',
+              icon: 'success',
+              showConfirmButton: false,
+              timer: 1500
+            })
+            window.location.reload()
+          })
+          .catch((error) => {
+            console.error('Error al cancelar el contrato:', error)
+            alert('Hubo un error al cancelar el contrato. Inténtalo de nuevo más tarde.')
+          })
+      }
+    })
+  }
   const AddImagen = () => {
     const [selectedFile, setSelectedFile] = useState(null)
     const [description, setDescription] = useState('')
@@ -400,14 +441,22 @@ const CustomModal = ({
         return <AddImagen />
       case 'edit':
         return <EditInmueble />
-      case 'delete':
-        return <p>Contenido para eliminar</p>
+
       case 'service':
         return <Service />
       default:
         return null
     }
   }
+  const defaulRender = () => {
+    setSelectedOption(null)
+  }
+
+  useEffect(() => {
+    if (isOpen == false) {
+      defaulRender()
+    }
+  }, [isOpen])
 
   return (
     <Modal
@@ -437,7 +486,7 @@ const CustomModal = ({
               <button className="btn btn-primary botonModalInmueble" onClick={handleService}>
                 Servicios
               </button>
-              <button className="btn btn-danger botonModalInmueble" onClick={handleDelete}>
+              <button className="btn btn-danger botonModalInmueble" onClick={handleCancel}>
                 Eliminar
               </button>
             </div>

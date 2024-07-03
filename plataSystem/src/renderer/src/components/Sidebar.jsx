@@ -2,6 +2,15 @@ import { Link } from 'react-router-dom'
 import './styles/Sidebar.css' // Importa el archivo de estilos CSS
 import { IoIosNotifications } from 'react-icons/io'
 import { useEffect, useState } from 'react'
+import { IoIosHome } from 'react-icons/io'
+import { IoPersonCircleOutline } from 'react-icons/io5'
+import { BsFilePerson } from 'react-icons/bs'
+import { FaRegBuilding } from 'react-icons/fa'
+import { FaFileContract } from 'react-icons/fa'
+import { SiCashapp } from 'react-icons/si'
+import { VscReport } from 'react-icons/vsc'
+import { HiOutlineUsers } from 'react-icons/hi'
+import { CiCircleInfo } from "react-icons/ci";
 function Sidebar() {
   const [tipoUser, setTipoUser] = useState('')
   useEffect(() => {
@@ -18,50 +27,55 @@ function Sidebar() {
       <ul className="sidebar-menu">
         <li>
           <Link to="/Home" className="sidebar-link">
-            <i className="fas fa-home"></i>
-            <span>Inicio</span>
+            <IoIosHome /> <span>Inicio</span>
           </Link>
         </li>
         <li>
           <Link to="/Clients" className="sidebar-link">
-            <i className="fas fa-users"></i>
+            <IoPersonCircleOutline />
             <span>Clientes</span>
           </Link>
         </li>
         <li>
           <Link to="/Inquilinos" className="sidebar-link">
-            <i className="fas fa-users"></i>
+            <BsFilePerson />
             <span>Inquilinos</span>
           </Link>
         </li>
         <li>
           <Link to="/Immuebles" className="sidebar-link">
-            <i className="fas fa-users"></i>
+            <FaRegBuilding />
             <span>Inmuebles</span>
           </Link>
         </li>
         <li>
           <Link to="/Arredamientos" className="sidebar-link">
-            <i className="fas fa-users"></i>
+            <FaFileContract />
             <span>Arrendamientos</span>
           </Link>
         </li>
         <li>
           <Link to="/Pagos" className="sidebar-link">
-            <i className="fas fa-users"></i>
+            <SiCashapp />
             <span>Pagos</span>
           </Link>
         </li>
         <li>
           <Link to="/Formats" className="sidebar-link">
-            <i className="fas fa-users"></i>
+            <VscReport />
             <span>Formatos</span>
+          </Link>
+        </li>
+        <li>
+          <Link to="/Otros" className="sidebar-link">
+            <CiCircleInfo />
+            <span>Otros</span>
           </Link>
         </li>
         {tipoUser === 'admin' && (
           <li className="userLink">
             <Link to="/Users" className="sidebar-link userLink">
-              <i className="fas fa-users"></i>
+              <HiOutlineUsers />
               <span>Usuarios</span>
             </Link>
           </li>

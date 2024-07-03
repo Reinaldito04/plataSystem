@@ -8,6 +8,7 @@ import Inquilinos from '../pages/Inquilinos'
 import Formats from '../pages/Formats'
 import Pagos from '../pages/Pagos'
 import Users from '../pages/Users'
+import Otros from '../pages/Otros'
 function Routers() {
   return (
     <Routes>
@@ -19,6 +20,7 @@ function Routers() {
       <Route path="/Pagos" element={<Pagos />} />
       <Route path="/Inquilinos" element={<Inquilinos />} />
       <Route path="/Formats" element={<Formats />} />
+      <Route path="/Otros" element={<Otros />} />
       <Route path="/Users" element={<Users />} />
     </Routes>
   )

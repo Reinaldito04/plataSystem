@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
 import axiosInstance from '../utils/BackendConfig'
 import RenovarContrato from './RenovarContrato'
 import './styles/AddArriendo.css'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 const ContratosPorVencer = () => {
   const [data, setData] = useState([])
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [selectedRow, setSelectedRow] = useState([])
-
+  const MySwal = withReactContent(Swal)
   useEffect(() => {
     axiosInstance
       .get('/contracts-expiring')
@@ -29,6 +31,37 @@ const ContratosPorVencer = () => {
   const closeModal = () => {
     setModalIsOpen(false)
     setSelectedRow(null)
+  }
+  const desactivarContrato = async (row) => {
+    MySwal.fire({
+      title: '¿Estas seguro de desactivar este contrato?',
+      text: 'No se eliminara información vinculada a este contrato',
+      icon: 'warning',
+
+      showCancelButton: true,
+      cancelButtonText: 'No, no desactivar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, desactivar!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosInstance
+          .put(`/contract-desactivar/${row.ContratoID}`)
+          .then((response) => {
+            console.log(response.data)
+            MySwal.fire({
+              title: 'Contrato desactivado',
+              icon: 'success',
+              showConfirmButton: false,
+              timer: 1500
+            })
+          })
+          .catch((error) => {
+            console.error('Error al desactivar el contrato:', error)
+            alert('Hubo un error al desactivar el contrato. Inténtalo de nuevo más tarde.')
+          })
+      }
+    })
   }
 
   const columns = [
@@ -108,7 +141,9 @@ const ContratosPorVencer = () => {
           <button className="btn btn-primary botonHome" onClick={() => openModal(row)}>
             Renovar Contrato
           </button>
-          <button className="btn btn-danger botonHome">Deshabilitar</button>
+          <button className="btn btn-danger botonHome" onClick={() => desactivarContrato(row)}>
+            Deshabilitar
+          </button>
         </div>
       )
     }

@@ -116,6 +116,16 @@ function PagosServicios() {
     fetchData() // Llama a fetchData directamente aquí, sin agregarlo como una dependencia
   }, [])
 
+  useEffect(() => {
+    if (modalIsOpen == false) {
+      setFecha('')
+      setMonto('')
+      setContrato(null)
+      setConcept('')
+      setSelectedOption('')
+      setServicios([])
+    }
+  })
   const handleChange = (event) => {
     setSelectedOption(event.target.value)
   }
@@ -206,7 +216,8 @@ function PagosServicios() {
                 value={selectedOption}
                 onChange={handleChange}
               >
-                <option value="">Seleccione un servicio</option>
+                {servicios.length === 0 && <option value="">No hay servicios</option>}
+
                 {servicios.map((servicio) => (
                   <option key={servicio.ID} value={servicio.ID}>
                     {servicio.Servicio} - Proveedor :{servicio.Proveedor} - Monto : {servicio.Monto}

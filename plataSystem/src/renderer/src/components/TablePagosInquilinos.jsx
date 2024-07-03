@@ -92,7 +92,7 @@ function TablePagosInquilinos({ Tipo }) {
 
   const fetchData = async () => {
     try {
-      const response = await axiosInstance.get(`getPays?type=${Tipo}`)
+      const response = await axiosInstance.get(`/getPays?type=${Tipo}`)
       setData(response.data)
     } catch (err) {
       setError(err.message)
@@ -100,9 +100,10 @@ function TablePagosInquilinos({ Tipo }) {
       setLoading(false)
     }
   }
+
   useEffect(() => {
     fetchData()
-  }, [Tipo, fetchData])
+  }, [Tipo])
   const handlePagoSubmit = async (event) => {
     event.preventDefault()
     try {
@@ -183,7 +184,7 @@ function TablePagosInquilinos({ Tipo }) {
           <h2 className="text-center">Añadir Pago</h2>
           <form onSubmit={handlePagoSubmit}>
             <div className="justify-content-center align-center mx-auto">
-              <ContractAutoComplect onSelect={handleContratoSelect} />
+              <ContractAutoComplect onSelect={handleContratoSelect} Monto={'si'} />
             </div>
             <div className="form-group">
               <label htmlFor="mount">Monto</label>

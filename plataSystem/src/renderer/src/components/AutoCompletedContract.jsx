@@ -3,7 +3,7 @@ import './styles/Autocomplete.css'
 import PropTypes from 'prop-types'
 import axiosInstance from '../utils/BackendConfig'
 
-function ContractAutoComplect({ onSelect }) {
+function ContractAutoComplect({ onSelect, Monto }) {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -110,6 +110,12 @@ function ContractAutoComplect({ onSelect }) {
               Dirección: {inmueble.InmuebleDireccion}
               <br />
               ID Contrato : {inmueble.ContratoID}
+              {/* Renderizar Monto si existe */}
+              {Monto == 'si' && (
+                <div>
+                  <b>Monto:</b> {inmueble.Monto}
+                </div>
+              )}
             </li>
           ))}
         </ul>
@@ -119,7 +125,8 @@ function ContractAutoComplect({ onSelect }) {
 }
 
 ContractAutoComplect.propTypes = {
-  onSelect: PropTypes.func.isRequired
+  onSelect: PropTypes.func.isRequired,
+  Monto: PropTypes.string
 }
 
 export default ContractAutoComplect

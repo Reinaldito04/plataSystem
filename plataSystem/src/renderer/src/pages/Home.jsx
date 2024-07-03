@@ -3,6 +3,7 @@ import ReusableCard from '../components/CardWelcome'
 import logo from '../assets/Images/logo.png'
 import './styles/Home.css'
 import Birthdays from '../components/Birthdays'
+import ComisionesPorCobrar from '../components/ComisionesPorCobrar'
 import CuotasPorVencer from '../components/CuotasPorVencer'
 import ContratosPorVencer from '../components/ContratosPorVencer'
 import { useState, useEffect } from 'react'
@@ -27,12 +28,8 @@ function Home() {
         return <CuotasPorVencer />
       case 'Cumpleaños':
         return <Birthdays />
-      case 'Servicios por pagar':
-        return (
-          <div>
-            <h4>Contenido de Servicios por pagar</h4>
-          </div>
-        )
+      case 'Comisiones':
+        return <ComisionesPorCobrar />
       case 'Contratos por vencer':
         return <ContratosPorVencer />
       default:
@@ -69,11 +66,11 @@ function Home() {
         <div className="row container">
           <div className="col-md-6">
             <ReusableCard
-              title="Servicios por pagar"
-              text="Los servicios domesticos por cobrar"
+              title="Comisiones por cobrar"
+              text="Comisiones por cobrar del mes actual"
               bgColor="rgb(70, 130, 169)"
               textColor="text-white"
-              fuction={() => handleCardClick('Servicios por pagar')}
+              fuction={() => handleCardClick('Comisiones')}
             />
           </div>
 

@@ -19,6 +19,7 @@ function BarSearchImmuebles() {
   const [modalIsOpen2, setModalIsOpen2] = useState(false)
   const [selectedRow, setSelectedRow] = useState(null)
   const [selectedOption, setSelectedOption] = useState('') // Estado para la opción seleccionada
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null) // Estado para controlar la imagen seleccionada en el modal grande
 
   const handleInmuebleSelect = (inmueble) => {
     setSelectedInmueble(inmueble)
@@ -58,14 +59,16 @@ function BarSearchImmuebles() {
         <p>Inquilino</p>
         <input readOnly type="text" placeholder="Inquilino..." value={inquilino} />
         <div className="container-imagenes">
-          <div className="contenedorimagenes" onClick={() => setModalIsOpen(true)}>
-            <p className="textoImagen">{imagenData.length}</p>
-            <img
-              className="img-fluid"
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Picture_icon_BLACK.svg/1156px-Picture_icon_BLACK.svg.png"
-              alt=""
-            />
-          </div>
+          {imagenData.length > 0 && (
+            <div className="contenedorimagenes" onClick={() => setModalIsOpen(true)}>
+              <p className="textoImagen">{imagenData.length}</p>
+              <img
+                className="img-fluid"
+                src={`${ruta}/media/${imagenData[0].Imagen}`} // Aquí asumo que la primera imagen será la principal
+                alt={`Imagen principal`}
+              />
+            </div>
+          )}
         </div>
         <div className="container text-center mx-auto">
           <button
@@ -82,7 +85,7 @@ function BarSearchImmuebles() {
         overlayClassName="custom-overlay"
         isOpen={modalIsOpen}
         onRequestClose={() => setModalIsOpen(false)}
-        contentLabel="Ejemplo de Modal"
+        contentLabel="Modal de Imágenes"
       >
         <div className="container-botonmodal">
           <button className="closeModal" onClick={() => setModalIsOpen(false)}>
@@ -90,16 +93,24 @@ function BarSearchImmuebles() {
           </button>
         </div>
         <div className="container-fluid">
-          <p className="text-center">Imagenes</p>
+          <p className="text-center">Imágenes</p>
           <div className="image-grid">
             {imagenData.map((imagen, idx) => (
-              <div key={idx} className="image-item">
+              <div key={idx} className="image-item" onClick={() => setSelectedImageIndex(idx)}>
                 <img
                   className="img-fluid imgInmueble"
                   src={`${ruta}/media/${imagen.Imagen}`}
                   alt={`Inmueble ${idx}`}
                 />
-                <p>{imagen.Descripcion}</p>
+
+                <p className="">Descripcion : {imagen.Descripcion}</p>
+                <p
+                  style={{
+                    display: 'none'
+                  }}
+                >
+                  {imagen.FechaSubida}
+                </p>
               </div>
             ))}
           </div>
@@ -113,6 +124,35 @@ function BarSearchImmuebles() {
         selectedOption={selectedOption}
         setSelectedOption={setSelectedOption}
       />
+
+      {/* Modal para visualización ampliada de imágenes */}
+      <Modal
+        className="custom-modal modalArriendo"
+        overlayClassName="custom-overlay"
+        isOpen={selectedImageIndex !== null}
+        onRequestClose={() => setSelectedImageIndex(null)}
+        contentLabel="Modal de Imagen Ampliada"
+      >
+        <div className="container-botonmodal">
+          <button className="closeModal" onClick={() => setSelectedImageIndex(null)}>
+            X
+          </button>
+        </div>
+        <div className="container-fluid">
+          <img
+            className="img-fluid"
+            style={{ maxHeight: '600px', maxWidth: 'auto', margin: 'auto', objectFit: 'contain' }}
+            src={`${ruta}/media/${imagenData[selectedImageIndex]?.Imagen}`}
+            alt={`Inmueble ${selectedImageIndex}`}
+          />
+          <p className="text-center fs-2">
+            Descripcion : {imagenData[selectedImageIndex]?.Descripcion}
+          </p>
+          <p className="text-center fs-5">
+            Fecha de subida : {imagenData[selectedImageIndex]?.FechaSubida.split(' ')[0]}
+          </p>
+        </div>
+      </Modal>
     </>
   )
 }

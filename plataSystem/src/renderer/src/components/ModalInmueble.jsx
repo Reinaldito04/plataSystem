@@ -243,6 +243,86 @@ const CustomModal = ({
       </>
     )
   }
+
+  const EditInmueble = () => {
+    const [direccion, setDireccion] = useState(selectedRow.Direccion)
+    const [tipo, setTipo] = useState(selectedRow.Tipo)
+    const [descripcion, setDescripcion] = useState(
+      selectedRow.Descripcion ? selectedRow.Descripcion : ''
+    )
+    const [municipio, setMunicipio] = useState(selectedRow.Municipio)
+    const id = selectedRow.ID
+    const [error, setError] = useState('')
+
+    const editInmueble = async () => {
+      try {
+        const response = await axiosInstance.put(`/editInmueble/${id}`, {
+          Direccion: direccion,
+          Tipo: tipo,
+          Descripcion: descripcion,
+          Municipio: municipio,
+          CedulaPropietario: ''
+        })
+        console.log(response.data)
+        alert('Fue actualizado correctamente')
+        window.location.reload()
+      } catch (err) {
+        setError(err.message)
+      }
+    }
+    return (
+      <>
+        <p className="text-center">Editar Inmueble</p>
+        {error && <p>{error}</p>}
+
+        <div className="form-group">
+          <label htmlFor="">Descripción</label>
+          <input
+            type="text"
+            value={descripcion}
+            onChange={(event) => setDescripcion(event.target.value)}
+            className="form-control"
+            placeholder="Descripción"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="">Tipo</label>
+          <input
+            type="text"
+            value={tipo}
+            onChange={(event) => setTipo(event.target.value)}
+            className="form-control"
+            placeholder="Tipo"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="">Municipio</label>
+          <input
+            type="text"
+            value={municipio}
+            onChange={(event) => setMunicipio(event.target.value)}
+            className="form-control"
+            placeholder="Municipio"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="">Dirección</label>
+          <input
+            type="text"
+            value={direccion}
+            onChange={(event) => setDireccion(event.target.value)}
+            className="form-control"
+            placeholder="Dirección"
+          />
+        </div>
+        <div className="container">
+          <button type="submit" className="btn mx-auto mt-2 btn-primary" onClick={editInmueble}>
+            Guardar
+          </button>
+        </div>
+      </>
+    )
+  }
   const AddImagen = () => {
     const [selectedFile, setSelectedFile] = useState(null)
     const [description, setDescription] = useState('')
@@ -319,7 +399,7 @@ const CustomModal = ({
       case 'addImages':
         return <AddImagen />
       case 'edit':
-        return <p>Contenido para editar</p>
+        return <EditInmueble />
       case 'delete':
         return <p>Contenido para eliminar</p>
       case 'service':

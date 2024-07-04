@@ -1,8 +1,11 @@
-import { contextBridge } from 'electron'
-import { electronAPI } from '@electron-toolkit/preload'
+const { contextBridge, ipcRenderer } = require('electron')
+const { electronAPI } = require('@electron-toolkit/preload')
 
 // Custom APIs for renderer
-const api = {}
+const api = {
+  saveAddress: (address) => ipcRenderer.invoke('save-address', address),
+  getAddress: () => ipcRenderer.invoke('get-address')
+}
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise

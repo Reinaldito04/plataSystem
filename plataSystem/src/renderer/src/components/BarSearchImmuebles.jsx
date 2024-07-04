@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Modal from 'react-modal'
 import './styles/AddArriendo.css'
 import CustomModal from './ModalInmueble'
+import image from '../assets/Images/pngwing.com.png'
 
 import ruta from '../utils/RutaBackend'
 
@@ -64,7 +65,7 @@ function BarSearchImmuebles() {
               <p className="textoImagen">{imagenData.length}</p>
               <img
                 className="img-fluid"
-                src={`${ruta}/media/${imagenData[0].Imagen}`} // Aquí asumo que la primera imagen será la principal
+                src={image} // Aquí asumo que la primera imagen será la principal
                 alt={`Imagen principal`}
               />
             </div>

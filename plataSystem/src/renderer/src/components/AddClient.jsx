@@ -178,18 +178,6 @@ function AddClient() {
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="notes">Notas</label>
-              <textarea
-                className="form-control"
-                value={formData.notes}
-                name="notes"
-                onChange={handleChange}
-                id="notes"
-                rows="3"
-              ></textarea>
-            </div>
-
             <button type="submit" className="btn btn-primary">
               Guardar
             </button>

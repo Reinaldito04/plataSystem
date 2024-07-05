@@ -4,6 +4,7 @@ import { useState } from 'react'
 import FormatNotificacionCondominio from '../components/FormatNotificacionCondominio'
 import FormatNotificacionVehiculos from '../components/FormatNotificacionVehiculos'
 import FormartInquilino from '../components/FormartInquilino'
+import FormatInmueble from '../components/FormatInmueble'
 function Formats() {
   const [activeCard, setActiveCard] = useState('') // Estado para la tarjeta activa
   const handleCardClick = (card) => {
@@ -18,6 +19,8 @@ function Formats() {
         return <FormatNotificacionVehiculos />
       case 'Inquilino':
         return <FormartInquilino />
+      case 'Inmueble':
+        return <FormatInmueble />
       default:
         return null
     }
@@ -44,6 +47,8 @@ function Formats() {
             fuction={() => handleCardClick('Vehiculos')}
           />
         </div>
+      </div>
+      <div className="row mt-2">
         <div className="col-md-6">
           <ReusableCard
             title="Formato de registro de inquilino"
@@ -53,7 +58,17 @@ function Formats() {
             fuction={() => handleCardClick('Inquilino')}
           />
         </div>
+        <div className="col-md-6">
+          <ReusableCard
+            title="Formato de entrega de inmueble"
+            text="Formato para entregar inmueble y demas información "
+            bgColor="rgb(116, 155, 194)"
+            textColor="text-white"
+            fuction={() => handleCardClick('Inmueble')}
+          />
+        </div>
       </div>
+
       <div className="container mt-3">{renderOptionsContent()}</div>
     </Layout>
   )

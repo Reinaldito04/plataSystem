@@ -13,6 +13,10 @@ const RenovarContrato = ({ isOpen, onRequestClose, Contrato }) => {
   const [commissionDates, setCommissionDates] = useState([])
   const [commissionModalIsOpen, setCommissionModalIsOpen] = useState(false)
 
+  const [username, setUsername] = useState('')
+  useEffect(() => {
+    setUsername(localStorage.getItem('username'))
+  }, [])
   const handleAddCommissionDate = (date) => {
     setCommissionDates([...commissionDates, date])
     setCommissionModalIsOpen(false)
@@ -39,6 +43,10 @@ const RenovarContrato = ({ isOpen, onRequestClose, Contrato }) => {
         FechaFin: fechaFin,
         Monto: montoRenovacion,
         comisiones: commissionDates
+      })
+      await axiosInstance.post('addInformation', {
+        username: username,
+        description: `Se renovo el contrato de la cedula del identidad : ${Contrato.CedulaPropietario} (${Contrato.InmuebleDireccion})`
       })
 
       console.log(response.data)

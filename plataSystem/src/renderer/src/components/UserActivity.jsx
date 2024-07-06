@@ -1,34 +1,43 @@
+import { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component'
+import axiosInstance from '../utils/BackendConfig'
+import Tippy from '@tippyjs/react'
+import 'tippy.js/dist/tippy.css'
 const columns = [
   {
-    name: 'Usuario',
-    selector: (row) => row.Usuario
+    name: 'id',
+    selector: (row) => row.id
   },
   {
-    name: 'Descripcion',
-    selector: (row) => row.Descripcion
+    name: 'Descripción',
+    selector: (row) => row.description,
+    sortable: true,
+    cell: (row) => {
+      return (
+        <Tippy content={row.description}>
+          <div>{row.description}</div>
+        </Tippy>
+      )
+    }
   },
   {
-    name: 'Fecha',
-    selector: (row) => row.Date
+    name: 'Realizado por ',
+    selector: (row) => row.username
   }
 ]
 
-const data = [
-  {
-    id: 1,
-    Usuario: 'Beetlejuice',
-    Descripcion: '1988',
-    Date: '2023'
-  },
-  {
-    id: 2,
-    Usuario: 'Ghostbusters',
-    Descripcion: '1984',
-    Date: '2024'
-  }
-]
 function UserActivity() {
+  const [data, setData] = useState([])
+  useEffect(() => {
+    axiosInstance
+      .get('/getInformationUsers')
+      .then((response) => {
+        setData(response.data)
+      })
+      .catch((error) => {
+        console.error('Error fetching contracts:', error)
+      })
+  }, [])
   return (
     <>
       <p className="text-center">Actividades realizadas por los usuarios</p>

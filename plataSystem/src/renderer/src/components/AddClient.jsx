@@ -2,9 +2,14 @@ import { useState } from 'react'
 import Modal from 'react-modal'
 import './styles/Addclient.css'
 import axiosInstance from '../utils/BackendConfig'
+import { useEffect } from 'react'
 function AddClient() {
   const [modalIsOpen, setModalIsOpen] = useState(false)
+  const [username, setUsername] = useState('')
 
+  useEffect(() => {
+    setUsername(localStorage.getItem('username'))
+  }, [])
   const [formData, setFormData] = useState({
     name: '',
     lastName: '',
@@ -29,6 +34,11 @@ function AddClient() {
     try {
       await axiosInstance.post('/addClient', formData)
       console.log('Cliente guardado exitosamente')
+      const description = `Se añadio al cliente de la cedula del identidad : ${formData.dni}`
+      await axiosInstance.post('/addInformation', {
+        username: username,
+        description: description
+      })
       setModalIsOpen(false)
     } catch (error) {
       console.error('Error al guardar el cliente:', error)

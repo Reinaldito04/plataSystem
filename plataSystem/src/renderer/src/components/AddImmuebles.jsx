@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Modal from 'react-modal'
 import './styles/Addclient.css'
 import Autocomplete from './AutoCompleted'
@@ -12,8 +12,12 @@ function AddImmuebles() {
     Tipo: '',
     Municipio: ''
   })
+  const [username, setUsername] = useState('')
   const [alertMessage, setAlertMessage] = useState(null)
 
+  useEffect(() => {
+    setUsername(localStorage.getItem('username'))
+  }, [])
   const handleAutocompleteSelect = (value) => {
     setAutocompleteValue(value)
   }
@@ -50,6 +54,11 @@ function AddImmuebles() {
         const response = await axiosInstance.post('/addInmueble', dataToSend)
         console.log('Respuesta del servidor:', response.data)
         // Muestra el mensaje de éxito
+        const description = `Agregó el inmueble ${formData.Direccion}`
+        await axiosInstance.post('/addInformation', {
+          username: username,
+          description: description
+        })
         setAlertMessage('¡Inmueble añadido correctamente!')
         // Cierra el modal después de un tiempo
         setTimeout(() => {

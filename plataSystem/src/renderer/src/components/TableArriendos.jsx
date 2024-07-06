@@ -120,6 +120,7 @@ function TableArriendos() {
     acontecimiento: '',
     fecha: ''
   })
+  const [username, setUsername] = useState('')
   const [tipoUser, setTipoUser] = useState('')
   useEffect(() => {
     setTipoUser(localStorage.getItem('userType'))
@@ -134,6 +135,9 @@ function TableArriendos() {
       .catch((error) => {
         console.error('Error fetching contracts:', error)
       })
+  }, [])
+  useEffect(() => {
+    setUsername(localStorage.getItem('username'))
   }, [])
   const MySwal = withReactContent(Swal)
   useEffect(() => {
@@ -220,6 +224,10 @@ function TableArriendos() {
         Detalle: detailsInmueble.acontecimiento,
         Fecha: detailsInmueble.fecha
       })
+      await axiosInstance.post('/addInformation', {
+        username: username,
+        description: `Se agrego el acontecimiento ${detailsInmueble.acontecimiento} al contrato ${detailsContrat.ContratoID}`
+      })
       console.log(response.data)
       // Puedes manejar la respuesta aquí, por ejemplo, mostrar un mensaje de éxito o cerrar el modal
       setModalIsOpen(false)
@@ -240,16 +248,19 @@ function TableArriendos() {
       cancelButtonText: 'No, no cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
+        axiosInstance.delete(`/contract/${row.ContratoID}`).then((response) => {
+          console.log(response.data)
+          MySwal.fire({
+            title: 'Contrato cancelado',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1500
+          })
+        })
         axiosInstance
-          .delete(`/contract/${row.ContratoID}`)
-          .then((response) => {
-            console.log(response.data)
-            MySwal.fire({
-              title: 'Contrato cancelado',
-              icon: 'success',
-              showConfirmButton: false,
-              timer: 1500
-            })
+          .post('/addInformation', {
+            username: username,
+            description: `Se elimino el contrato de la cedula del identidad : ${row.CedulaPropietario} (${row.InmuebleDireccion})`
           })
           .catch((error) => {
             console.error('Error al cancelar el contrato:', error)

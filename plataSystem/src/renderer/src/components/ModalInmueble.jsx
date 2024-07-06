@@ -262,6 +262,10 @@ const CustomModal = ({
           Municipio: municipio,
           CedulaPropietario: ''
         })
+        await axiosInstance.post('addInformation', {
+          username: username,
+          description: `Editó el inmueble ${selectedRow.Direccion} con ID ${id}`
+        })
         console.log(response.data)
         alert('Fue actualizado correctamente')
         window.location.reload()
@@ -329,7 +333,10 @@ const CustomModal = ({
       }
     })
   )
-
+  const [username, setUsername] = useState('')
+  useEffect(() => {
+    setUsername(localStorage.getItem('username'))
+  }, [])
   const handleCancel = async () => {
     onRequestClose()
     MySwal.fire({
@@ -354,6 +361,10 @@ const CustomModal = ({
               icon: 'success',
               showConfirmButton: false,
               timer: 1500
+            })
+            axiosInstance.post('addInformation', {
+              username: username,
+              description: `Se elimino el inmueble de la cedula del identidad : ${selectedRow.CedulaPropietario} (${selectedRow.Direccion})`
             })
             window.location.reload()
           })

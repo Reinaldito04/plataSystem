@@ -42,7 +42,6 @@ function Users() {
               <button onClick={() => setOptionsUsers('Eliminar')} className="btn text-center">
                 Eliminar
               </button>
-            
             </div>
             <div className="mt-3">{renderOptionsContent()}</div>
           </div>

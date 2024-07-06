@@ -126,7 +126,9 @@ function TablePagosInquilinos({ Tipo }) {
       }
 
       // Mostrar alerta con la información del pago
-      alert(alertMessage)
+      if (Tipo == 'Empresa') {
+        alert(alertMessage)
+      }
 
       setModalIsOpen(false)
       setFecha('')

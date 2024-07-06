@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import './styles/Sidebar.css' // Importa el archivo de estilos CSS
-import { IoIosNotifications } from 'react-icons/io'
 import { useEffect, useState } from 'react'
 import { IoIosHome } from 'react-icons/io'
 import { IoPersonCircleOutline } from 'react-icons/io5'
@@ -10,7 +9,8 @@ import { FaFileContract } from 'react-icons/fa'
 import { SiCashapp } from 'react-icons/si'
 import { VscReport } from 'react-icons/vsc'
 import { HiOutlineUsers } from 'react-icons/hi'
-import { CiCircleInfo } from "react-icons/ci";
+import { CiCircleInfo } from 'react-icons/ci'
+import logo from '../assets/Images/logo.png'
 function Sidebar() {
   const [tipoUser, setTipoUser] = useState('')
   useEffect(() => {
@@ -19,9 +19,8 @@ function Sidebar() {
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <button className="btn">
-          <IoIosNotifications className="notificaciones" />
-        </button>
+        <img src={logo} width={120} height={120} alt="logo" />
+
         <h3>InmoPlata</h3>
       </div>
       <ul className="sidebar-menu">

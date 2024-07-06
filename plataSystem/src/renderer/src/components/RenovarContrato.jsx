@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Modal from 'react-modal'
 import './styles/AddArriendo.css'
 import PropTypes from 'prop-types'
@@ -10,6 +10,18 @@ const RenovarContrato = ({ isOpen, onRequestClose, Contrato }) => {
   const [fechaInicio, setFechaInicio] = useState('')
   const [fechaFin, setFechaFin] = useState('')
   const [monto, setMonto] = useState('')
+  const [commissionDates, setCommissionDates] = useState([])
+  const [commissionModalIsOpen, setCommissionModalIsOpen] = useState(false)
+
+  const handleAddCommissionDate = (date) => {
+    setCommissionDates([...commissionDates, date])
+    setCommissionModalIsOpen(false)
+  }
+  useEffect(() => {
+    if (onRequestClose) {
+      setCommissionDates([])
+    }
+  }, [onRequestClose])
 
   const handleRenew = async () => {
     try {
@@ -25,7 +37,8 @@ const RenovarContrato = ({ isOpen, onRequestClose, Contrato }) => {
         ID: Contrato.ContratoID,
         FechaInicio: fechaInicio,
         FechaFin: fechaFin,
-        Monto: montoRenovacion
+        Monto: montoRenovacion,
+        comisiones: commissionDates
       })
 
       console.log(response.data)
@@ -36,62 +49,125 @@ const RenovarContrato = ({ isOpen, onRequestClose, Contrato }) => {
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onRequestClose={onRequestClose}
-      className="custom-modal modalArriendo"
-      overlayClassName="custom-overlay"
-      contentLabel="Renovar Contrato"
-    >
-      <div className="container-botonmodal">
-        <button className="closeModal" onClick={onRequestClose}>
-          X
-        </button>
-      </div>
-      <h2>Renovar Contrato</h2>
-      {Contrato && (
-        <div className="container-fluid mx-auto">
-          <div className="form-group">
-            <label htmlFor="fechaInicio">Fecha de Inicio</label>
-            <input
-              type="date"
-              className="form-control"
-              id="fechaInicio"
-              value={fechaInicio}
-              onChange={(e) => setFechaInicio(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="fechaFin">Fecha de Vencimiento</label>
-            <input
-              type="date"
-              className="form-control"
-              id="fechaFin"
-              value={fechaFin}
-              onChange={(e) => setFechaFin(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="monto">Monto, monto actual : {Contrato.Monto}$</label>
-            <input
-              type="number"
-              className="form-control"
-              id="monto"
-              value={monto}
-              onChange={(e) => setMonto(e.target.value)}
-            />
-          </div>
-          <div className="container text-center mx-auto mt-2">
-            <button className="btn btn-success mx-auto" onClick={handleRenew}>
-              Renovar
-            </button>
-            <button className="btn btn-danger mx-auto" onClick={onRequestClose}>
-              Cancelar
-            </button>
-          </div>
+    <>
+      <Modal
+        isOpen={isOpen}
+        onRequestClose={onRequestClose}
+        className="custom-modal modalArriendo"
+        overlayClassName="custom-overlay"
+        contentLabel="Renovar Contrato"
+      >
+        <div className="container-botonmodal">
+          <button className="closeModal" onClick={onRequestClose}>
+            X
+          </button>
         </div>
-      )}
-    </Modal>
+        <h2>Renovar Contrato</h2>
+        {Contrato && (
+          <div className="container-fluid mx-auto">
+            <div className="form-group">
+              <label htmlFor="fechaInicio">Fecha de Inicio</label>
+              <input
+                type="date"
+                className="form-control"
+                id="fechaInicio"
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="fechaFin">Fecha de Vencimiento</label>
+              <input
+                type="date"
+                className="form-control"
+                id="fechaFin"
+                value={fechaFin}
+                onChange={(e) => setFechaFin(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="monto">Monto, monto actual : {Contrato.Monto}$</label>
+              <input
+                type="number"
+                className="form-control"
+                id="monto"
+                value={monto}
+                onChange={(e) => setMonto(e.target.value)}
+              />
+            </div>
+            <div className="container-fluid mt-2 ">
+              <div className="d-flex mx-auto align-items-center justify-content-around">
+                <label htmlFor="CommissionDates ">Fechas de Comisiones</label>
+                <button
+                  type="button"
+                  className="btn btn-secondary mt-2 "
+                  onClick={() => setCommissionModalIsOpen(true)}
+                >
+                  Añadir Fechas de Comisión
+                </button>
+              </div>
+
+              <div className="container-fluid p-2">
+                <ul>
+                  {commissionDates.map((date, index) => (
+                    <li key={index}>{date}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="container text-center mx-auto mt-2">
+              <button className="btn btn-success mx-auto" onClick={handleRenew}>
+                Renovar
+              </button>
+              <button className="btn btn-danger mx-auto" onClick={onRequestClose}>
+                Cancelar
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
+      <Modal
+        className="custom-modal modalCommission"
+        overlayClassName="custom-overlay"
+        isOpen={commissionModalIsOpen}
+        onRequestClose={() => setCommissionModalIsOpen(false)}
+        contentLabel="Añadir Fechas de Comisión"
+      >
+        <div className="container-botonmodal">
+          <button className="closeModal" onClick={() => setCommissionModalIsOpen(false)}>
+            X
+          </button>
+        </div>
+
+        <div className="modal-content">
+          <h2>Añadir Fecha de Comisión</h2>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              const commissionDate = e.target.elements.CommissionDate.value
+              if (commissionDate) {
+                handleAddCommissionDate(commissionDate)
+              }
+            }}
+          >
+            <div className="form-group">
+              <label htmlFor="CommissionDate">Fecha de Comisión</label>
+              <input
+                type="date"
+                className="form-control"
+                id="CommissionDate"
+                name="CommissionDate"
+                placeholder="Ingrese la fecha de la comisión"
+              />
+            </div>
+
+            <button type="submit" className="btn btn-primary">
+              Añadir
+            </button>
+          </form>
+        </div>
+      </Modal>
+    </>
   )
 }
 

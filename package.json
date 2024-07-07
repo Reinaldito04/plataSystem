@@ -1,0 +1,11 @@
+{
+    "name": "run-dev",
+    "version": "1.0.0",
+    "description": "Script para ejecutar npm run dev",
+    "main": "RunApp.js",
+    "scripts": {
+      "start": "node RunApp.js"
+    },
+    "dependencies": {}
+  }
+  

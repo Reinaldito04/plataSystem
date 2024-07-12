@@ -27,6 +27,11 @@ const columns = [
     name: 'Tipo',
     selector: (row) => row.Tipo,
     sortable: true
+  },
+  {
+    name: 'Estacionamiento',
+    selector: (row) => row.Estacionamiento,
+    sortable: true
   }
 ]
 

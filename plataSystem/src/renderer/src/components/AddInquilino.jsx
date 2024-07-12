@@ -45,7 +45,6 @@ function AddInquilino() {
           Añadir Cliente
         </button>
       </div>
-
       <Modal
         className="custom-modal"
         overlayClassName="custom-overlay"

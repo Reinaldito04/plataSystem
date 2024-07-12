@@ -249,6 +249,9 @@ const CustomModal = ({
     const [descripcion, setDescripcion] = useState(
       selectedRow.Descripcion ? selectedRow.Descripcion : ''
     )
+    const [estacionamiento, setEstacionamiento] = useState(
+      selectedRow.Estacionamiento ? selectedRow.Estacionamiento : ''
+    )
     const [municipio, setMunicipio] = useState(selectedRow.Municipio)
     const id = selectedRow.ID
     const [error, setError] = useState('')
@@ -260,7 +263,8 @@ const CustomModal = ({
           Tipo: tipo,
           Descripcion: descripcion,
           Municipio: municipio,
-          CedulaPropietario: ''
+          CedulaPropietario: '',
+          Estacionamiento: estacionamiento
         })
         await axiosInstance.post('addInformation', {
           username: username,
@@ -316,6 +320,15 @@ const CustomModal = ({
             onChange={(event) => setDireccion(event.target.value)}
             className="form-control"
             placeholder="Dirección"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="">Estacionamiento</label>
+          <input
+            type="text"
+            value={estacionamiento}
+            className="form-control"
+            onChange={(event) => setEstacionamiento(event.target.value)}
           />
         </div>
         <div className="container">

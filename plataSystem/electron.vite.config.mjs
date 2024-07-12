@@ -15,6 +15,10 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src')
       }
     },
-    plugins: [react()]
+    plugins: [react()],
+    server: {
+      host: true, // Esto permitirá que el servidor escuche en todas las interfaces de red
+      port: 5173 // Puedes especificar el puerto que desees
+    }
   }
 })

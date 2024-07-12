@@ -10,7 +10,8 @@ function AddImmuebles() {
   const [formData, setFormData] = useState({
     Direccion: '',
     Tipo: '',
-    Municipio: ''
+    Municipio: '',
+    Estacionamiento: ''
   })
   const [username, setUsername] = useState('')
   const [alertMessage, setAlertMessage] = useState(null)
@@ -147,7 +148,17 @@ function AddImmuebles() {
                 onChange={handleChange}
               />
             </div>
-
+            <div className="form-group">
+              <label htmlFor="">Estacionamiento</label>
+              <input
+                type="text"
+                className="form-control"
+                id="Estacionamiento"
+                name="Estacionamiento"
+                placeholder="Estacionamiento"
+                onChange={handleChange}
+              />
+            </div>
             <div className="form-group">
               <label htmlFor="notes">Descripción</label>
               <textarea className="form-control" id="notes" name="notes" rows="3"></textarea>

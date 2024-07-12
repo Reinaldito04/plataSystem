@@ -6,7 +6,6 @@ import { useEffect } from 'react'
 function AddClient() {
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [username, setUsername] = useState('')
-
   useEffect(() => {
     setUsername(localStorage.getItem('username'))
   }, [])
@@ -39,6 +38,7 @@ function AddClient() {
         username: username,
         description: description
       })
+
       setModalIsOpen(false)
     } catch (error) {
       console.error('Error al guardar el cliente:', error)
@@ -187,7 +187,6 @@ function AddClient() {
                 placeholder="Ingrese su Código Postal"
               />
             </div>
-
             <button type="submit" className="btn btn-primary">
               Guardar
             </button>

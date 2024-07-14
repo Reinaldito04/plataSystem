@@ -42,7 +42,7 @@ function Sidebar() {
           </Link>
         </li>
         <li>
-          <Link to="/Immuebles" className="sidebar-link">
+          <Link to="/Inmuebles" className="sidebar-link">
             <FaRegBuilding />
             <span>Inmuebles</span>
           </Link>

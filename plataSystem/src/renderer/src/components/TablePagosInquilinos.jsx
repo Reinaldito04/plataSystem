@@ -70,6 +70,16 @@ const columns = [
     )
   },
   {
+    name: 'Tipo de pago',
+    selector: (row) => row.TypePay,
+    sortable: true,
+    cell: (row) => (
+      <Tippy content={row.TypePay}>
+        <div>{row.TypePay}</div>
+      </Tippy>
+    )
+  },
+  {
     name: 'ID del contrato',
     selector: (row) => row.IdContract,
     sortable: true,
@@ -89,7 +99,10 @@ function TablePagosInquilinos({ Tipo }) {
   const [contrato, setContrato] = useState(null)
   const [monto, setMonto] = useState('')
   const [fecha, setFecha] = useState('')
-
+  const [tipoPago, setTipoPago] = useState('')
+  const [montoContrato, setMontoContrato] = useState('')
+  const [searchText, setSearchText] = useState('')
+  const [filterBy, setFilterBy] = useState('Tipo de pago')
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get(`/getPays?type=${Tipo}`)
@@ -102,16 +115,21 @@ function TablePagosInquilinos({ Tipo }) {
   }
 
   useEffect(() => {
+    if (Tipo === 'Personal') {
+      setTipoPago('Pago hacia propietario')
+    }
     fetchData()
   }, [Tipo])
   const handlePagoSubmit = async (event) => {
     event.preventDefault()
+
     try {
       const payload = {
         IdContract: contrato?.ContratoID,
         Date: fecha,
         Amount: monto,
-        PaymentType: Tipo
+        PaymentType: Tipo,
+        TypePay: tipoPago
       }
       const response = await axiosInstance.post('/PayRental', payload)
       console.log('Pago registrado exitosamente:', response.data)
@@ -126,14 +144,18 @@ function TablePagosInquilinos({ Tipo }) {
       }
 
       // Mostrar alerta con la información del pago
-      if (Tipo == 'Empresa') {
+      if ((Tipo == 'Empresa') & (tipoPago == 'Arrendamiento')) {
         alert(alertMessage)
       }
 
       setModalIsOpen(false)
       setFecha('')
       setMonto('')
+      setTipoPago('')
       setContrato(null)
+
+      setMontoContrato(null)
+
       fetchData()
     } catch (error) {
       console.error('Error al registrar el pago:', error)
@@ -146,7 +168,25 @@ function TablePagosInquilinos({ Tipo }) {
 
   const handleContratoSelect = (inmueble) => {
     setContrato(inmueble)
+    setMontoContrato(inmueble.Monto)
   }
+  const filteredData = data.filter((item) => {
+    switch (filterBy) {
+      case 'Nombre y apellido':
+        return (
+          item.Name.toLowerCase().includes(searchText.toLowerCase()) ||
+          item.Lastname.toLowerCase().includes(searchText.toLowerCase())
+        )
+      case 'Tipo de pago':
+        return item.TypePay.toLowerCase().includes(searchText.toLowerCase())
+      case 'Fecha':
+        return item.Date.includes(searchText)
+      case 'Monto':
+        return item.Amount.toString().includes(searchText)
+      default:
+        return true
+    }
+  })
 
   return (
     <>
@@ -161,11 +201,32 @@ function TablePagosInquilinos({ Tipo }) {
         </button>
       </div>
       <div style={{ width: '800px', overflowX: 'auto' }}>
+        <div style={{ marginBottom: '10px', padding: '5px' }}>
+          <label htmlFor="filterBy">Filtrar por:</label>
+          <select
+            id="filterBy"
+            value={filterBy}
+            onChange={(e) => setFilterBy(e.target.value)}
+            style={{ marginLeft: '10px' }}
+          >
+            <option value="Tipo de pago">Tipo de pago</option>
+            <option value="Nombre y apellido">Nombre y apellido</option>
+            <option value="Fecha">Fecha</option>
+            <option value="Monto">Monto</option>
+          </select>
+        </div>
+        <input
+          type="text"
+          placeholder="Buscar..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ marginBottom: '10px', padding: '5px' }}
+        />
         <DataTable
           columns={columns}
           selectableRowsVisibleOnly
           selectableRows
-          data={data}
+          data={filteredData}
           pagination
         />
       </div>
@@ -193,11 +254,28 @@ function TablePagosInquilinos({ Tipo }) {
               <input
                 type="number"
                 className="form-control"
+                placeholder={`Monto : ${montoContrato}`}
                 value={monto}
                 onChange={(e) => setMonto(e.target.value)}
                 id="mount"
               />
             </div>
+            {Tipo === 'Empresa' && (
+              <div className="form-group">
+                <label htmlFor="description">Tipo de Pago</label>
+                <select
+                  onChange={(e) => setTipoPago(e.target.value)}
+                  className="form-control"
+                  id="description"
+                  value={tipoPago}
+                >
+                  <option value="Arrendamiento">Canon de Arrendamiento</option>
+                  <option value="Deposito De Garantia">Deposito en Garantia</option>
+                  <option value="Honorarios">Honorarios Inmobiliarios</option>
+                  <option value="Documento Legal">Documento Legal</option>
+                </select>
+              </div>
+            )}
             <div className="form-group">
               <label htmlFor="date">Fecha</label>
               <input

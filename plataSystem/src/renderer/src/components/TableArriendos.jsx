@@ -126,6 +126,7 @@ function TableArriendos() {
     setTipoUser(localStorage.getItem('userType'))
   })
   const [detailsFromBackend, setDetailsFromBackend] = useState([])
+  const [payFromBackend,setPayFromBackend] = useState([])
   useEffect(() => {
     axiosInstance
       .get('/contracts')
@@ -164,7 +165,19 @@ function TableArriendos() {
           console.error('Error al obtener los datos:', error)
         }
       }
+      fetchData()
+    }
 
+    if (activeButton === 'viewPays') {
+      const fetchData = async () => {
+        try {
+          const response = await axiosInstance.get(`/getPays/${detailsContrat.ContratoID}`) // Reemplaza con la URL de tu API
+          setPayFromBackend(response.data)
+          console.log(detailsFromBackend)
+        } catch (error) {
+          console.error('Error al obtener los datos:', error)
+        }
+      }
       fetchData()
     }
   }, [activeButton])
@@ -317,6 +330,32 @@ function TableArriendos() {
             </div>
           </>
         )
+      case 'viewPays':
+        return (
+          <>
+            <p className="text-center ">Pagos vinculados al contrato</p>
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Pago</th>
+                    <th>Fecha</th>
+                    <th>Monto</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {payFromBackend.map((pago, index) => (
+                    <tr key={index}>
+                      <td>{pago.TipoPago}</td>
+                      <td>{pago.FechaPago}</td>
+                      <td>{pago.Monto}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )
       case 'ViewAcont':
         return (
           <>
@@ -408,6 +447,14 @@ function TableArriendos() {
         <div className="modal-content">
           <h2 className="text-center">Detalles</h2>
           <div className="container mx-auto text-center">
+            <button
+              className="btn btn-dark mx-auto"
+              onClick={() => {
+                handleButtonClick('viewPays')
+              }}
+            >
+              Ver Pagos
+            </button>
             <button
               className="btn btn-primary mx-auto"
               onClick={() => {

@@ -15,7 +15,7 @@ function Routers() {
       <Route path="/" element={<LoginSection />} />
       <Route path="/Home" element={<Home />} />
       <Route path="/Clients" element={<Clients />} />
-      <Route path="/Immuebles" element={<Immuebles />} />
+      <Route path="/Inmuebles" element={<Immuebles />} />
       <Route path="/Arredamientos" element={<Arredamientos />} />
       <Route path="/Pagos" element={<Pagos />} />
       <Route path="/Inquilinos" element={<Inquilinos />} />

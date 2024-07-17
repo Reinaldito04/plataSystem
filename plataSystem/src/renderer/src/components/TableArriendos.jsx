@@ -126,7 +126,18 @@ function TableArriendos() {
     setTipoUser(localStorage.getItem('userType'))
   })
   const [detailsFromBackend, setDetailsFromBackend] = useState([])
-  const [payFromBackend,setPayFromBackend] = useState([])
+  const [payFromBackend, setPayFromBackend] = useState([])
+  const [searchTerm, setSearchTerm] = useState('')
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value)
+  }
+
+  const filteredPays = payFromBackend.filter(
+    (pago) =>
+      pago.TipoPago.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      pago.Fecha.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      pago.Monto.toString().toLowerCase().includes(searchTerm.toLowerCase())
+  )
   useEffect(() => {
     axiosInstance
       .get('/contracts')
@@ -148,6 +159,14 @@ function TableArriendos() {
         acontecimiento: '',
         fecha: ''
       })
+      setDetailsContrat([])
+      setDetailsFromBackend([])
+      setPayFromBackend([])
+      setSearchTerm('')
+      setFilterText('')
+
+      // Reinicia el estado de activeButton cuando el modal se cierra
+
       setActiveButton('')
     }
   }, [modalIsOpen])
@@ -334,21 +353,30 @@ function TableArriendos() {
         return (
           <>
             <p className="text-center ">Pagos vinculados al contrato</p>
+            <div className="mb-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Buscar..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </div>
             <div className="table-responsive">
               <table className="table">
                 <thead>
                   <tr>
-                    <th>Pago</th>
+                    <th>Tipo de pago</th>
                     <th>Fecha</th>
                     <th>Monto</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {payFromBackend.map((pago, index) => (
+                  {filteredPays.map((pago, index) => (
                     <tr key={index}>
                       <td>{pago.TipoPago}</td>
-                      <td>{pago.FechaPago}</td>
-                      <td>{pago.Monto}</td>
+                      <td>{pago.Fecha}</td>
+                      <td>{pago.Monto}$</td>
                     </tr>
                   ))}
                 </tbody>

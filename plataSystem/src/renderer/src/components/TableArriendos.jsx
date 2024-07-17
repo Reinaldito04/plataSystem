@@ -302,6 +302,27 @@ function TableArriendos() {
     })
   }
 
+  const handleReportSubmit = async () => {
+    try {
+      const IdContract = detailsContrat.ContratoID // Suponiendo que contrato es tu objeto con el ID de contrato
+      await axiosInstance.post(`/report-pays/${IdContract}`).then((response) => {
+        console.log(response)
+
+        // Construir la URL de descarga del archivo
+        const downloadUrl = `${ruta}/${response.data.file_path}`
+        const downloadLink = document.createElement('a')
+        downloadLink.href = downloadUrl
+        downloadLink.setAttribute('download', '')
+        document.body.appendChild(downloadLink)
+        downloadLink.click()
+        document.body.removeChild(downloadLink)
+      })
+      console.log('El formato generado exitosamente')
+    } catch (error) {
+      console.log('Error al generar el formato:', error)
+    }
+  }
+
   const renderOptionsContent = () => {
     switch (activeButton) {
       case 'addAcont':
@@ -381,6 +402,14 @@ function TableArriendos() {
                   ))}
                 </tbody>
               </table>
+              <div className="mx-auto text-center">
+                <button
+                  onClick={() => handleReportSubmit()}
+                  className="btn btn-primary text-center"
+                >
+                  Imprimir canon
+                </button>
+              </div>
             </div>
           </>
         )

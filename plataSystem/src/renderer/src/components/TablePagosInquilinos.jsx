@@ -118,8 +118,19 @@ function TablePagosInquilinos({ Tipo }) {
     if (Tipo === 'Personal') {
       setTipoPago('Pago hacia propietario')
     }
-    fetchData()
-  }, [Tipo])
+
+    fetchData() // Asumiendo que fetchData() es una función definida que obtiene datos
+
+    // Restablecer estados si modalIsOpen no es true
+    if (!modalIsOpen) {
+      setMonto('')
+      setFecha('')
+      setContrato(null)
+      setMontoContrato('')
+      setTipoPago('')
+    }
+  }, [Tipo, modalIsOpen, fetchData]) // Añade todas las dependencias necesarias
+
   const handlePagoSubmit = async (event) => {
     event.preventDefault()
 

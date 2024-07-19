@@ -70,6 +70,16 @@ const columns = [
     )
   },
   {
+    name: 'Metodo de Pago',
+    selector: (row) => row.PaymentMethod,
+    sortable: true,
+    cell: (row) => (
+      <Tippy content={row.PaymentMethod}>
+        <div>{row.PaymentMethod}</div>
+      </Tippy>
+    )
+  },
+  {
     name: 'Tipo de pago',
     selector: (row) => row.TypePay,
     sortable: true,
@@ -103,6 +113,7 @@ function TablePagosInquilinos({ Tipo }) {
   const [montoContrato, setMontoContrato] = useState('')
   const [searchText, setSearchText] = useState('')
   const [filterBy, setFilterBy] = useState('Tipo de pago')
+  const [metodo, setMetodo] = useState('')
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get(`/getPays?type=${Tipo}`)
@@ -140,7 +151,8 @@ function TablePagosInquilinos({ Tipo }) {
         Date: fecha,
         Amount: monto,
         PaymentType: Tipo,
-        TypePay: tipoPago
+        TypePay: tipoPago,
+        PaymentMethod: metodo
       }
       const response = await axiosInstance.post('/PayRental', payload)
       console.log('Pago registrado exitosamente:', response.data)
@@ -280,6 +292,7 @@ function TablePagosInquilinos({ Tipo }) {
                   id="description"
                   value={tipoPago}
                 >
+                  <option value="">Seleccione</option>
                   <option value="Arrendamiento">Canon de Arrendamiento</option>
                   <option value="Deposito De Garantia">Deposito en Garantia</option>
                   <option value="Honorarios">Honorarios Inmobiliarios</option>
@@ -287,6 +300,21 @@ function TablePagosInquilinos({ Tipo }) {
                 </select>
               </div>
             )}
+            <div className="form-group">
+              <label htmlFor="description">Metodo de Pago</label>
+              <select
+                onChange={(e) => setMetodo(e.target.value)}
+                className="form-control"
+                id="description"
+                value={metodo}
+              >
+                <option value="">Seleccione</option>
+                <option value="Zelle">Zelle</option>
+                <option value="Dolares Efectivo">Dolares en Efectivo</option>
+                <option value="Transferencia Bolivares">Transferencia - Bolivares</option>
+                <option value="Otros">Otros</option>
+              </select>
+            </div>
             <div className="form-group">
               <label htmlFor="date">Fecha</label>
               <input

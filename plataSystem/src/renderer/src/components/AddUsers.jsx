@@ -68,6 +68,7 @@ function AddUsers() {
             onChange={(e) => setTypeUser(e.target.value)}
             value={typeUser}
           >
+            <option value="">-- Seleccione --</option>
             <option value="admin">Administrador</option>
             <option value="user">Usuario</option>
           </select>

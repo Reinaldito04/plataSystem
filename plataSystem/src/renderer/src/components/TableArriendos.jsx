@@ -390,6 +390,7 @@ function TableArriendos() {
                     <th>Tipo de pago</th>
                     <th>Fecha</th>
                     <th>Monto</th>
+                    <th>Metodo de Pago</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -398,6 +399,7 @@ function TableArriendos() {
                       <td>{pago.TipoPago}</td>
                       <td>{pago.Fecha}</td>
                       <td>{pago.Monto}$</td>
+                      <td>{pago.Metodo}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -8,7 +8,14 @@ import Modal from 'react-modal'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import RenovarContrato from './RenovarContrato'
-const columns = (handlePrint, handleCancel, handleModal, tipoUser, openModal2) => [
+const columns = (
+  handlePrint,
+  handleCancel,
+  handleModal,
+  tipoUser,
+  openModal2,
+  desactivarContrato
+) => [
   {
     name: 'ID del Contrato',
     selector: (row) => row.ContratoID,
@@ -94,6 +101,11 @@ const columns = (handlePrint, handleCancel, handleModal, tipoUser, openModal2) =
         <button className="btn btn-primary mt-1" onClick={() => openModal2(row)}>
           Renovar
         </button>
+        {desactivarContrato && (
+          <button className="btn btn-danger mt-1" onClick={() => desactivarContrato(row)}>
+            Inactivar
+          </button>
+        )}
         {tipoUser === 'admin' && (
           <button className="btn btn-danger mt-1" onClick={() => handleCancel(row)}>
             Cancelar
@@ -128,6 +140,7 @@ function TableArriendos() {
   const [detailsFromBackend, setDetailsFromBackend] = useState([])
   const [payFromBackend, setPayFromBackend] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
+
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value)
   }
@@ -200,6 +213,36 @@ function TableArriendos() {
       fetchData()
     }
   }, [activeButton])
+
+  const desactivarContrato = async (row) => {
+    MySwal.fire({
+      title: '¿Estas seguro de desactivar este contrato?',
+      text: 'No se eliminara información vinculada a este contrato',
+      icon: 'warning',
+
+      showCancelButton: true,
+      cancelButtonText: 'No, no desactivar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, desactivar!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosInstance.put(`/contract-desactivar/${row.ContratoID}`).then((response) => {
+          console.log(response.data)
+          MySwal.fire({
+            title: 'Contrato desactivado',
+            icon: 'success',
+            showConfirmButton: false,
+            timer: 1500
+          })
+        })
+        location.reload().catch((error) => {
+          console.error('Error al desactivar el contrato:', error)
+          alert('Hubo un error al desactivar el contrato. Inténtalo de nuevo más tarde.')
+        })
+      }
+    })
+  }
   const handlePrint = (row) => {
     const reportData = {
       fecha: new Date().toISOString().split('T')[0], // fecha actual en formato YYYY-MM-DD
@@ -486,7 +529,14 @@ function TableArriendos() {
       />
 
       <DataTable
-        columns={columns(handlePrint, handleCancel, handleModal, tipoUser, openModal2)}
+        columns={columns(
+          handlePrint,
+          handleCancel,
+          handleModal,
+          tipoUser,
+          openModal2,
+          desactivarContrato
+        )}
         data={filteredItems}
         pagination
       />

@@ -7,100 +7,8 @@ import 'tippy.js/dist/tippy.css'
 import Modal from 'react-modal'
 import './styles/AddArriendo.css'
 import PropTypes from 'prop-types'
-
-const columns = [
-  {
-    name: 'ID',
-    selector: (row) => row.ID,
-    sortable: true,
-    cell: (row) => (
-      <Tippy content={row.ID}>
-        <div>{row.ID}</div>
-      </Tippy>
-    )
-  },
-  {
-    name: 'Nombre',
-    selector: (row) => row.Name,
-    sortable: true,
-    cell: (row) => (
-      <Tippy content={row.Name}>
-        <div>{row.Name}</div>
-      </Tippy>
-    )
-  },
-  {
-    name: 'Apellido',
-    selector: (row) => row.Lastname,
-    sortable: true,
-    cell: (row) => (
-      <Tippy content={row.Lastname}>
-        <div>{row.Lastname}</div>
-      </Tippy>
-    )
-  },
-  {
-    name: 'DNI',
-    selector: (row) => row.DNI,
-    sortable: true,
-    cell: (row) => (
-      <Tippy content={row.DNI}>
-        <div>{row.DNI}</div>
-      </Tippy>
-    )
-  },
-  {
-    name: 'Monto',
-    selector: (row) => row.Amount,
-    sortable: true,
-    cell: (row) => (
-      <Tippy content={row.Amount}>
-        <div>{row.Amount}</div>
-      </Tippy>
-    )
-  },
-  {
-    name: 'Fecha',
-    selector: (row) => row.Date,
-    sortable: true,
-    cell: (row) => (
-      <Tippy content={row.Date}>
-        <div>{row.Date}</div>
-      </Tippy>
-    )
-  },
-  {
-    name: 'Metodo de Pago',
-    selector: (row) => row.PaymentMethod,
-    sortable: true,
-    cell: (row) => (
-      <Tippy content={row.PaymentMethod}>
-        <div>{row.PaymentMethod}</div>
-      </Tippy>
-    )
-  },
-  {
-    name: 'Tipo de pago',
-    selector: (row) => row.TypePay,
-    sortable: true,
-    cell: (row) => (
-      <Tippy content={row.TypePay}>
-        <div>{row.TypePay}</div>
-      </Tippy>
-    )
-  },
-  {
-    name: 'ID del contrato',
-    selector: (row) => row.IdContract,
-    sortable: true,
-    cell: (row) => (
-      <Tippy content={row.IdContract}>
-        <div>{row.IdContract}</div>
-      </Tippy>
-    )
-  }
-]
-
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 function TablePagosInquilinos({ Tipo }) {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
@@ -114,6 +22,14 @@ function TablePagosInquilinos({ Tipo }) {
   const [searchText, setSearchText] = useState('')
   const [filterBy, setFilterBy] = useState('Tipo de pago')
   const [metodo, setMetodo] = useState('')
+  const [username, setUsername] = useState('')
+
+  const MySwal = withReactContent(Swal)
+
+  useEffect(() => {
+    setUsername(localStorage.getItem('username'))
+  }, [])
+
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get(`/getPays?type=${Tipo}`)
@@ -142,6 +58,38 @@ function TablePagosInquilinos({ Tipo }) {
     }
   }, [Tipo, modalIsOpen, fetchData]) // Añade todas las dependencias necesarias
 
+  const handlePagoDelete = async (row) => {
+    try {
+      MySwal.fire({
+        title: '¿Estás seguro de eliminar este pago?',
+        text: 'Esta acción no se puede deshacer',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        // Corrige aquí el paréntesis
+        if (result.isConfirmed) {
+          axiosInstance.delete(`/deletePay/${row.ID}`).then((response) => {
+            console.log(response.data)
+            alert('Eliminado correctamente')
+            fetchData()
+          })
+          axiosInstance
+            .post('/addInformation', {
+              username: username,
+              description: `Se elimino el pago del contrato con ID : ${row.IdContract} con monto de ${row.Amount}$`
+            })
+            .catch((error) => {
+              console.error('Error al eliminar el pago:', error)
+              alert('Error al eliminar el pago')
+            })
+        }
+      })
+    } catch (error) {
+      console.error('Error en el manejo de la eliminación del pago:', error)
+    }
+  }
   const handlePagoSubmit = async (event) => {
     event.preventDefault()
 
@@ -210,7 +158,111 @@ function TablePagosInquilinos({ Tipo }) {
         return true
     }
   })
-
+  const columns = [
+    {
+      name: 'ID',
+      selector: (row) => row.ID,
+      sortable: true,
+      cell: (row) => (
+        <Tippy content={row.ID}>
+          <div>{row.ID}</div>
+        </Tippy>
+      )
+    },
+    {
+      name: 'Nombre',
+      selector: (row) => row.Name,
+      sortable: true,
+      cell: (row) => (
+        <Tippy content={row.Name}>
+          <div>{row.Name}</div>
+        </Tippy>
+      )
+    },
+    {
+      name: 'Apellido',
+      selector: (row) => row.Lastname,
+      sortable: true,
+      cell: (row) => (
+        <Tippy content={row.Lastname}>
+          <div>{row.Lastname}</div>
+        </Tippy>
+      )
+    },
+    {
+      name: 'DNI',
+      selector: (row) => row.DNI,
+      sortable: true,
+      cell: (row) => (
+        <Tippy content={row.DNI}>
+          <div>{row.DNI}</div>
+        </Tippy>
+      )
+    },
+    {
+      name: 'Monto',
+      selector: (row) => row.Amount,
+      sortable: true,
+      cell: (row) => (
+        <Tippy content={row.Amount}>
+          <div>{row.Amount}</div>
+        </Tippy>
+      )
+    },
+    {
+      name: 'Fecha',
+      selector: (row) => row.Date,
+      sortable: true,
+      cell: (row) => (
+        <Tippy content={row.Date}>
+          <div>{row.Date}</div>
+        </Tippy>
+      )
+    },
+    {
+      name: 'Metodo de Pago',
+      selector: (row) => row.PaymentMethod,
+      sortable: true,
+      cell: (row) => (
+        <Tippy content={row.PaymentMethod}>
+          <div>{row.PaymentMethod}</div>
+        </Tippy>
+      )
+    },
+    {
+      name: 'Tipo de pago',
+      selector: (row) => row.TypePay,
+      sortable: true,
+      cell: (row) => (
+        <Tippy content={row.TypePay}>
+          <div>{row.TypePay}</div>
+        </Tippy>
+      )
+    },
+    {
+      name: 'ID del contrato',
+      selector: (row) => row.IdContract,
+      sortable: true,
+      cell: (row) => (
+        <Tippy content={row.IdContract}>
+          <div>{row.IdContract}</div>
+        </Tippy>
+      )
+    },
+    {
+      name: 'Acciones',
+      cell: (row) => (
+        <button
+          onClick={() => {
+            handlePagoDelete(row)
+          }}
+          className="btn btn-danger fs-6"
+        >
+          Eliminar
+        </button>
+      )
+    }
+  ]
   return (
     <>
       <div className="container-boton">

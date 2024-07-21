@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import DataTable from 'react-data-table-component'
 import axiosInstance from '../utils/BackendConfig'
 import ContractAutoComplect from './AutoCompletedContract'
@@ -9,6 +9,7 @@ import './styles/AddArriendo.css'
 import PropTypes from 'prop-types'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import ruta from '../utils/RutaBackend'
 function TablePagosInquilinos({ Tipo }) {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
@@ -24,13 +25,14 @@ function TablePagosInquilinos({ Tipo }) {
   const [metodo, setMetodo] = useState('')
   const [username, setUsername] = useState('')
 
+  const [year, setYear] = useState('')
   const MySwal = withReactContent(Swal)
 
   useEffect(() => {
     setUsername(localStorage.getItem('username'))
   }, [])
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const response = await axiosInstance.get(`/getPays?type=${Tipo}`)
       setData(response.data)
@@ -39,14 +41,14 @@ function TablePagosInquilinos({ Tipo }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [Tipo])
 
   useEffect(() => {
     if (Tipo === 'Personal') {
       setTipoPago('Pago hacia propietario')
     }
 
-    fetchData() // Asumiendo que fetchData() es una función definida que obtiene datos
+    fetchData() // Llama a fetchData
 
     // Restablecer estados si modalIsOpen no es true
     if (!modalIsOpen) {
@@ -88,6 +90,28 @@ function TablePagosInquilinos({ Tipo }) {
       })
     } catch (error) {
       console.error('Error en el manejo de la eliminación del pago:', error)
+    }
+  }
+  const handleReportPay = async () => {
+    try {
+      const response = await axiosInstance.post(`/report-pays-year?year=${year}&Para=${Tipo}`)
+      if (response.data.message === 'No payments found for the specified year.') {
+        // Mostrar una alerta si el mensaje coincide
+        alert('No hay pagos para este año')
+      } else {
+        // Manejar los datos recibidos de la respuesta si es necesario
+        const downloadUrl = `${ruta}/${response.data.output_path}`
+
+        // Crear un elemento <a> para iniciar la descarga
+        const downloadLink = document.createElement('a')
+        downloadLink.href = downloadUrl
+        downloadLink.setAttribute('download', '')
+        document.body.appendChild(downloadLink)
+        downloadLink.click()
+        document.body.removeChild(downloadLink)
+      }
+    } catch {
+      console.log(error)
     }
   }
   const handlePagoSubmit = async (event) => {
@@ -304,6 +328,25 @@ function TablePagosInquilinos({ Tipo }) {
           data={filteredData}
           pagination
         />
+        <div className="container-boton">
+          <div className="form-control">
+            <label htmlFor="filterBy">Filtrar por año para imprimir </label>
+            <input
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+              type="text"
+              className="form-control"
+            />
+          </div>
+          <button
+            onClick={() => {
+              handleReportPay()
+            }}
+            className="btn btn-success"
+          >
+            Imprimir
+          </button>
+        </div>
       </div>
 
       <Modal

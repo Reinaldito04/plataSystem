@@ -14,24 +14,25 @@ function AddUsers() {
 
     if (password.length < 8) {
       alert('La contraseña debe ser mayor a 8 caracteres')
-    }
-    axiosInstance
-      .post('/register', {
-        username: username,
-        password: password,
-        tipo: typeUser
-      })
-      .then((response) => {
-        console.log(response.data)
-        alert('Usuario registrado correctamente')
-      })
-      .catch((error) => {
-        alert(error.response.data)
-      })
+    } else {
+      axiosInstance
+        .post('/register', {
+          username: username,
+          password: password,
+          tipo: typeUser
+        })
+        .then((response) => {
+          console.log(response.data)
+          alert('Usuario registrado correctamente')
+        })
+        .catch((error) => {
+          alert(error.response.data)
+        })
 
-    setUsername('')
-    setPassword('')
-    setTypeUser('')
+      setUsername('')
+      setPassword('')
+      setTypeUser('')
+    }
   }
 
   return (

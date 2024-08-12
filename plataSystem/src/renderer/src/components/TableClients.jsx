@@ -102,18 +102,19 @@ function TableClients() {
       }
     })
   }
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get('/getClients')
-        setData(response.data)
-      } catch (err) {
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
-    }
 
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get('/getClients')
+      setData(response.data)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
     fetchData()
   }, [])
 
@@ -186,6 +187,9 @@ function TableClients() {
   return (
     <>
       <div style={{ width: '800px', overflowX: 'auto' }}>
+        <button className="btn btn-secondary mb-2" onClick={fetchData}>
+          Recargar Tabla
+        </button>
         <DataTable columns={columns} data={data} pagination />
       </div>
       <Modal

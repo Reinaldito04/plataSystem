@@ -32,8 +32,9 @@ function AddClient() {
     event.preventDefault()
     try {
       await axiosInstance.post('/addClient', formData)
+
       console.log('Cliente guardado exitosamente')
-      const description = `Se añadio al cliente de la cedula del identidad : ${formData.dni}`
+      const description = `Se añadió al cliente de la cédula de identidad: ${formData.dni}`
       await axiosInstance.post('/addInformation', {
         username: username,
         description: description
@@ -42,6 +43,15 @@ function AddClient() {
       setModalIsOpen(false)
     } catch (error) {
       console.error('Error al guardar el cliente:', error)
+
+      // Mostrar el error en un alert
+      if (error.response && error.response.data.detail) {
+        alert(`Error: ${error.response.data.detail}`)
+      } else if (error.request) {
+        alert('Error: No se recibió respuesta del servidor.')
+      } else {
+        alert(`Error: ${error.message}`)
+      }
     }
   }
 

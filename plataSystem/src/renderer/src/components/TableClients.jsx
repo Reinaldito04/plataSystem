@@ -15,7 +15,15 @@ function TableClients() {
   const [dataEdit, setDataEdit] = useState({})
   const [imagen, setImagen] = useState(null)
   const [username, setUsername] = useState('')
+  const [filterText, setFilterText] = useState('')
 
+  const filteredData = data.filter(
+    (item) =>
+      item.name.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.lastName.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.dni.toLowerCase().includes(filterText.toLowerCase()) ||
+      item.email.toLowerCase().includes(filterText.toLowerCase())
+  )
   useEffect(() => {
     setUsername(localStorage.getItem('username'))
   }, [])
@@ -187,10 +195,17 @@ function TableClients() {
   return (
     <>
       <div style={{ width: '800px', overflowX: 'auto' }}>
+        <input
+          type="text"
+          placeholder="Buscar..."
+          className="form-control mb-2"
+          value={filterText}
+          onChange={(e) => setFilterText(e.target.value)}
+        />
         <button className="btn btn-secondary mb-2" onClick={fetchData}>
           Recargar Tabla
         </button>
-        <DataTable columns={columns} data={data} pagination />
+        <DataTable columns={columns} data={filteredData} pagination />
       </div>
       <Modal
         className="custom-modal"

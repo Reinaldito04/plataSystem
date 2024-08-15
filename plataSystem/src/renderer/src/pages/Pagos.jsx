@@ -4,6 +4,8 @@ import ReusableCard from '../components/CardWelcome'
 import PagosInquilinos from '../components/PagosInquilinos'
 import PagosServicios from '../components/PagosServicios'
 import PagosGestion from '../components/PagosGestion'
+import PagosPendientes from '../components/PagosPendientes' // Import the new component
+
 function Pagos() {
   const [activeCard, setActiveCard] = useState('') // Estado para la tarjeta activa
 
@@ -32,6 +34,15 @@ function Pagos() {
             <p className="text-center">Gestion de Cobro</p>
             <div className="container-fluid">
               <PagosGestion />
+            </div>
+          </div>
+        )
+      case 'PagosPendientes':
+        return (
+          <div className="">
+            <p className="text-center">Pagos Pendientes / Deudas</p>
+            <div className="container-fluid">
+              <PagosPendientes />
             </div>
           </div>
         )
@@ -78,6 +89,15 @@ function Pagos() {
             title="Gestion de Cobro"
             text="Pagos propuestos (comprometidos)"
             bgColor="rgb(116, 155, 194)"
+            textColor="text-white"
+          />
+        </div>
+        <div className="col-md-6 mt-2">
+          <ReusableCard
+            fuction={() => handleCardClick('PagosPendientes')}
+            title="Pagos Pendientes"
+            text="Pagos que aún no se han realizado"
+            bgColor="rgb(200, 90, 90)" // Choose an appropriate color
             textColor="text-white"
           />
         </div>

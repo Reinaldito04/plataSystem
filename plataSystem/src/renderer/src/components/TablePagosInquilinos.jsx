@@ -25,6 +25,7 @@ function TablePagosInquilinos({ Tipo }) {
   const [metodo, setMetodo] = useState('')
   const [username, setUsername] = useState('')
 
+  const [pagosOtros, setPagoOtros] = useState('')
   const [year, setYear] = useState('')
   const MySwal = withReactContent(Swal)
 
@@ -56,6 +57,8 @@ function TablePagosInquilinos({ Tipo }) {
       setFecha('')
       setContrato(null)
       setMontoContrato('')
+      setMetodo('')
+      setPagoOtros('')
       setTipoPago('')
     }
   }, [Tipo, modalIsOpen, fetchData]) // Añade todas las dependencias necesarias
@@ -123,7 +126,7 @@ function TablePagosInquilinos({ Tipo }) {
         Date: fecha,
         Amount: monto,
         PaymentType: Tipo,
-        TypePay: tipoPago,
+        TypePay: tipoPago === 'Otros' ? pagosOtros : tipoPago,
         PaymentMethod: metodo
       }
       const response = await axiosInstance.post('/PayRental', payload)
@@ -148,7 +151,8 @@ function TablePagosInquilinos({ Tipo }) {
       setMonto('')
       setTipoPago('')
       setContrato(null)
-
+      setPagoOtros('')
+      setMetodo('')
       setMontoContrato(null)
 
       fetchData()
@@ -379,22 +383,38 @@ function TablePagosInquilinos({ Tipo }) {
               />
             </div>
             {Tipo === 'Empresa' && (
-              <div className="form-group">
-                <label htmlFor="description">Tipo de Pago</label>
-                <select
-                  onChange={(e) => setTipoPago(e.target.value)}
-                  className="form-control"
-                  id="description"
-                  value={tipoPago}
-                >
-                  <option value="">Seleccione</option>
-                  <option value="Arrendamiento">Canon de Arrendamiento</option>
-                  <option value="Deposito De Garantia">Deposito en Garantia</option>
-                  <option value="Honorarios">Honorarios Inmobiliarios</option>
-                  <option value="Documento Legal">Documento Legal</option>
-                </select>
-              </div>
+              <>
+                <div className="form-group">
+                  <label htmlFor="description">Tipo de Pago</label>
+                  <select
+                    onChange={(e) => setTipoPago(e.target.value)}
+                    className="form-control"
+                    id="description"
+                    value={tipoPago}
+                  >
+                    <option value="">Seleccione</option>
+                    <option value="Arrendamiento">Canon de Arrendamiento</option>
+                    <option value="Deposito De Garantia">Deposito en Garantia</option>
+                    <option value="Honorarios">Honorarios Inmobiliarios</option>
+                    <option value="Documento Legal">Documento Legal</option>
+                    <option value="Otros">Otros</option>
+                  </select>
+                </div>
+                {tipoPago === 'Otros' && (
+                  <div className="form-group">
+                    <label htmlFor="description">Descripción</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="description"
+                      value={pagosOtros}
+                      onChange={(e) => setPagoOtros(e.target.value)}
+                    />
+                  </div>
+                )}
+              </>
             )}
+
             <div className="form-group">
               <label htmlFor="description">Metodo de Pago</label>
               <select

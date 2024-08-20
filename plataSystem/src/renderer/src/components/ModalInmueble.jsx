@@ -24,6 +24,9 @@ const CustomModal = ({
   const handleService = () => {
     setSelectedOption('service')
   }
+  const handleCorpoelec = () => {
+    setSelectedOption('corpoelec')
+  }
 
   const Service = () => {
     const [selectedOptionService, setSelectedOptionService] = useState('')
@@ -388,6 +391,107 @@ const CustomModal = ({
       }
     })
   }
+  const CorpoelecData = () => {
+    const [nic, setNic] = useState('')
+    const [user, setUser] = useState('')
+    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('')
+
+    const handleSubmitCorpoelec = async () => {
+      try {
+        const response = await axiosInstance.post('/addCorpoelec', {
+          idInmueble: selectedRow.ID, // Asegúrate de que `selectedRow.ID` esté definido
+          usuario: user,
+          password: password,
+          NIC: nic,
+          CorreoPassword: email
+        })
+        console.log(response.data)
+        alert(response.data.Message) // Accede al mensaje dentro del objeto `data`
+      } catch (err) {
+        alert(err.response.data.Message || 'Error al enviar los datos')
+      }
+    }
+
+    const fetchDataCorpoelec = async () => {
+      try {
+        const response = await axiosInstance.get(`/getCorpoelecData/${selectedRow.ID}`)
+        setNic(response.data.NIC)
+        setUser(response.data.Usuario)
+        setPassword(response.data.Clave)
+        setEmail(response.data.MailPassword)
+        console.log(response.data)
+      } catch (err) {
+        console.log(err.message)
+      }
+    }
+
+    useEffect(() => {
+      fetchDataCorpoelec()
+    }, [selectedRow.ID])
+
+    return (
+      <>
+        <p className="text-center">Corpoelec</p>
+        <div className="form-group">
+          <label htmlFor="nic">NIC</label>
+          <input
+            type="text"
+            className="form-control"
+            id="nic"
+            value={nic}
+            onChange={(event) => {
+              setNic(event.target.value)
+            }}
+            placeholder="NIC"
+          />
+          <label htmlFor="usuario">Usuario</label>
+          <input
+            type="text"
+            className="form-control"
+            id="usuario"
+            value={user}
+            onChange={(event) => {
+              setUser(event.target.value)
+            }}
+            placeholder="Usuario"
+          />
+          <label htmlFor="password">Clave</label>
+          <input
+            type="text"
+            className="form-control"
+            id="password"
+            value={password}
+            onChange={(event) => {
+              setPassword(event.target.value)
+            }}
+            placeholder="Clave"
+          />
+          <label htmlFor="email">Correo y Clave</label>
+          <input
+            type="text"
+            className="form-control"
+            id="email"
+            value={email}
+            onChange={(event) => {
+              setEmail(event.target.value)
+            }}
+            placeholder="Correo y Clave"
+          />
+        </div>
+        <div className="container">
+          <button
+            type="submit"
+            className="btn mx-auto mt-2 btn-primary"
+            onClick={handleSubmitCorpoelec}
+          >
+            Guardar
+          </button>
+        </div>
+      </>
+    )
+  }
+
   const AddImagen = () => {
     const [selectedFile, setSelectedFile] = useState(null)
     const [description, setDescription] = useState('')
@@ -468,6 +572,8 @@ const CustomModal = ({
 
       case 'service':
         return <Service />
+      case 'corpoelec':
+        return <CorpoelecData />
       default:
         return null
     }
@@ -510,7 +616,10 @@ const CustomModal = ({
               <button className="btn btn-primary botonModalInmueble" onClick={handleService}>
                 Servicios
               </button>
-              <button className="btn btn-danger botonModalInmueble" onClick={handleCancel}>
+              <button className="btn btn-primary botonModalInmueble" onClick={handleCorpoelec}>
+                Corpoelec
+              </button>
+              <button className="btn btn-danger mt-2 botonModalInmueble" onClick={handleCancel}>
                 Eliminar
               </button>
             </div>

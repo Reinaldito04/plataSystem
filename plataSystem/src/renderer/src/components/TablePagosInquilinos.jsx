@@ -24,7 +24,7 @@ function TablePagosInquilinos({ Tipo }) {
   const [filterBy, setFilterBy] = useState('Tipo de pago')
   const [metodo, setMetodo] = useState('')
   const [username, setUsername] = useState('')
-
+  const [total, setTotal] = useState(0)
   const [pagosOtros, setPagoOtros] = useState('')
   const [year, setYear] = useState('')
   const MySwal = withReactContent(Swal)
@@ -36,6 +36,8 @@ function TablePagosInquilinos({ Tipo }) {
   const fetchData = useCallback(async () => {
     try {
       const response = await axiosInstance.get(`/getPays?type=${Tipo}`)
+      const totalMonto = response.data.reduce((acc, payment) => acc + payment.Amount, 0)
+      setTotal(totalMonto)
       setData(response.data)
     } catch (err) {
       setError(err.message)
@@ -325,6 +327,7 @@ function TablePagosInquilinos({ Tipo }) {
           onChange={(e) => setSearchText(e.target.value)}
           style={{ marginBottom: '10px', padding: '5px' }}
         />
+        <p>Monto total ${total} </p>
         <DataTable
           columns={columns}
           selectableRowsVisibleOnly

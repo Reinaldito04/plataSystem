@@ -24,7 +24,7 @@ const columns = (
   },
   {
     name: 'Alquilado Por',
-    selector: (row) => `${row.ClienteNombre} ${row.ClienteApellido}`,
+    selector: (row) =>  ,
     sortable: true,
     filterable: true, // Habilita el filtro para esta columna
     cell: (row) => (

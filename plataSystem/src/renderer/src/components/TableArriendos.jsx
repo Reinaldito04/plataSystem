@@ -24,7 +24,7 @@ const columns = (
   },
   {
     name: 'Alquilado Por',
-    selector: (row) =>  ,
+    selector: (row) => row.CedulaCliente,
     sortable: true,
     filterable: true, // Habilita el filtro para esta columna
     cell: (row) => (

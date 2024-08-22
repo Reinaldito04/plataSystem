@@ -22,26 +22,20 @@ const columns = [
     filterable: true // Habilita el filtro para esta columna
   },
   {
-    name: 'Estado del pago',
-    selector: (row) => row.Estado,
-    sortable: true,
-    filterable: true // Habilita el filtro para esta columna
-  },
-  {
     name: 'Deuda Restante',
-    selector: (row) => row.DeudaRestante,
+    selector: (row) => `${row.DeudaPendiente}$`,
     sortable: true,
     filterable: true
   },
   {
     name: 'Monto total',
-    selector: (row) => row.Monto,
+    selector: (row) => ` ${row.MontoContrato}$`,
     sortable: true,
     filterable: true
   },
   {
-    name: 'Siguiente Pago',
-    selector: (row) => row.SiguientePago,
+    name: 'Dia de Pago',
+    selector: (row) => row.DiaPrimerPago,
     sortable: true,
     filterable: true // Habilita el filtro para esta columna
   },
@@ -57,7 +51,7 @@ function CuotasPorVencer() {
   const [data, setData] = useState([])
   useEffect(() => {
     axiosInstance
-      .get('/next-payments')
+      .get('/getPendingPayments')
       .then((response) => {
         setData(response.data)
       })

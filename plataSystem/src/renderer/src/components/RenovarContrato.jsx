@@ -12,6 +12,7 @@ const RenovarContrato = ({ isOpen, onRequestClose, Contrato }) => {
   const [monto, setMonto] = useState('')
   const [commissionDates, setCommissionDates] = useState([])
   const [commissionModalIsOpen, setCommissionModalIsOpen] = useState(false)
+  const [fechaPago, setFechaPago] = useState('')
 
   const [username, setUsername] = useState('')
   useEffect(() => {
@@ -42,7 +43,8 @@ const RenovarContrato = ({ isOpen, onRequestClose, Contrato }) => {
         FechaInicio: fechaInicio,
         FechaFin: fechaFin,
         Monto: montoRenovacion,
-        comisiones: commissionDates
+        comisiones: commissionDates,
+        FechaPago: fechaPago
       })
       await axiosInstance.post('addInformation', {
         username: username,
@@ -91,6 +93,16 @@ const RenovarContrato = ({ isOpen, onRequestClose, Contrato }) => {
                 id="fechaFin"
                 value={fechaFin}
                 onChange={(e) => setFechaFin(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="fechaPago">Fecha del Primer Pago</label>
+              <input
+                type="date"
+                className="form-control"
+                id="fechaPago"
+                value={fechaPago}
+                onChange={(e) => setFechaPago(e.target.value)}
               />
             </div>
             <div className="form-group">

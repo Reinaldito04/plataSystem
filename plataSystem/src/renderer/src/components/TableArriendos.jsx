@@ -89,6 +89,12 @@ const columns = (
     filterable: true // Habilita el filtro para esta columna
   },
   {
+    name: 'Monto',
+    selector: (row) => `${row.Monto}$`,
+    sortable: true,
+    filterable: true
+  },
+  {
     name: 'Acciones',
     cell: (row) => (
       <div>
@@ -118,7 +124,42 @@ const columns = (
     button: true
   }
 ]
-
+const customStyles = {
+  header: {
+    style: {
+      fontSize: '18px',
+      fontWeight: 'bold',
+      fontFamily: 'Helvetica, Arial, sans-serif',
+      textAlign: 'center',
+      padding: '10px',
+      borderTop: '2px solid #ddd',
+      borderBottom: '2px solid #ddd',
+      color: '#333',
+      backgroundColor: '#F1F1F1'
+    }
+  },
+  rows: {
+    style: {
+      minHeight: '60px', // Cambiar altura de filas
+      fontSize: '12px',
+      borderBottom: '1px solid #e3e3e3'
+    }
+  },
+  headCells: {
+    style: {
+      fontSize: '14px',
+      fontWeight: 'bold',
+      backgroundColor: '#f7f7f7',
+      borderBottom: '2px solid #ddd',
+      color: '#333'
+    }
+  },
+  cells: {
+    style: {
+      padding: '10px' // Espaciado en las celdas
+    }
+  }
+}
 function TableArriendos() {
   const [filterText, setFilterText] = useState('')
   const [data, setData] = useState([])
@@ -199,7 +240,18 @@ function TableArriendos() {
       }
       fetchData()
     }
-
+    if (activeButton === 'ViewResum') {
+      const fetchData = async () => {
+        try {
+          const response = await axiosInstance.get(`/report-pays/${detailsContrat.ContratoID}`) // Reemplaza con la URL de tu API
+          setDetailsFromBackend(response.data)
+          console.log(detailsFromBackend)
+        } catch (error) {
+          console.error('Error al obtener los datos:', error)
+        }
+      }
+      fetchData()
+    }
     if (activeButton === 'viewPays') {
       const fetchData = async () => {
         try {
@@ -458,6 +510,122 @@ function TableArriendos() {
             </div>
           </>
         )
+      case 'ViewResum':
+        return (
+          <>
+            <p className="text-center">Resumen del contrato</p>
+            <div className="table-responsive">
+              <table className="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Campo</th>
+                    <th>Valor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Inquilino</td>
+                    <td>{detailsFromBackend.INQUILINO}</td>
+                  </tr>
+                  <tr>
+                    <td>Contacto</td>
+                    <td>{detailsFromBackend.N_CONTACTO}</td>
+                  </tr>
+                  <tr>
+                    <td>Correo</td>
+                    <td>{detailsFromBackend.CORREO}</td>
+                  </tr>
+                  <tr>
+                    <td>Inmueble</td>
+                    <td>{detailsFromBackend.INMUEBLE}</td>
+                  </tr>
+                  <tr>
+                    <td>Fecha de Contrato</td>
+                    <td>{detailsFromBackend.FECHA_CONTRATO}</td>
+                  </tr>
+                  <tr>
+                    <td>Canon</td>
+                    <td>{detailsFromBackend.CANON}</td>
+                  </tr>
+                  <tr>
+                    <td>Depósito en Garantía</td>
+                    <td>{detailsFromBackend.DEPOSITO_EN_GARANTIA}</td>
+                  </tr>
+
+                  {/* Canones Mensuales */}
+                  <tr>
+                    <td>Canones Mensuales</td>
+                    <td>
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th>Mes</th>
+                            <th>Cantidad</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Array.isArray(detailsFromBackend.CANONES_MENSUALES) ? (
+                            detailsFromBackend.CANONES_MENSUALES.map((canon, index) => (
+                              <tr key={index}>
+                                <td>{canon['CANON MES']}</td>
+                                <td>{canon.Cantidad}</td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan="2">No hay canones mensuales disponibles</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>Total Contrato</td>
+                    <td>{detailsFromBackend.TOTAL_CONTRATO}</td>
+                  </tr>
+
+                  {/* Depósitos Efectuados */}
+                  <tr>
+                    <td>Depósitos Efectuados</td>
+                    <td>
+                      <table className="table">
+                        <thead>
+                          <tr>
+                            <th>Fecha</th>
+                            <th>Modalidad</th>
+                            <th>Cantidad</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Array.isArray(detailsFromBackend.DEPOSITOS_EFECTUADOS) ? (
+                            detailsFromBackend.DEPOSITOS_EFECTUADOS.map((deposito, index) => (
+                              <tr key={index}>
+                                <td>{deposito.Fecha}</td>
+                                <td>{deposito.MODALIDAD}</td>
+                                <td>{deposito.Cantidad}</td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan="3">No hay depósitos efectuados</td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>Total Depositado</td>
+                    <td>{detailsFromBackend.TOTAL_DEPOSITADO}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </>
+        )
       case 'ViewAcont':
         return (
           <>
@@ -529,6 +697,7 @@ function TableArriendos() {
       />
 
       <DataTable
+        title="Lista de Contratos"
         columns={columns(
           handlePrint,
           handleCancel,
@@ -539,6 +708,12 @@ function TableArriendos() {
         )}
         data={filteredItems}
         pagination
+        highlightOnHover
+        pointerOnHover
+        customStyles={customStyles} // Aplicar estilos personalizados
+        responsive
+        striped // Alterna colores de fila
+        noHeader={false} // Mostrar encabezado de la tabla
       />
 
       <Modal
@@ -555,7 +730,7 @@ function TableArriendos() {
         </div>
         <div className="modal-content">
           <h2 className="text-center">Detalles</h2>
-          <div className="container mx-auto text-center">
+          <div className="container-fluid mx-auto text-center">
             <button
               className="btn btn-dark mx-auto"
               onClick={() => {
@@ -571,6 +746,14 @@ function TableArriendos() {
               }}
             >
               Ver Acontecimientos
+            </button>
+            <button
+              className="btn btn-info mx-auto"
+              onClick={() => {
+                handleButtonClick('ViewResum')
+              }}
+            >
+              Resumen
             </button>
             <button
               className="btn btn-success"

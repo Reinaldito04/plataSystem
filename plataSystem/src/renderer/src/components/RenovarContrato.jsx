@@ -3,6 +3,8 @@ import Modal from 'react-modal'
 import './styles/AddArriendo.css'
 import PropTypes from 'prop-types'
 import axiosInstance from '../utils/BackendConfig'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
 Modal.setAppElement('#root') // Asegúrate de que el selector se ajuste a tu estructura de proyecto
 
@@ -13,15 +15,19 @@ const RenovarContrato = ({ isOpen, onRequestClose, Contrato }) => {
   const [commissionDates, setCommissionDates] = useState([])
   const [commissionModalIsOpen, setCommissionModalIsOpen] = useState(false)
   const [fechaPago, setFechaPago] = useState('')
+  const MySwal = withReactContent(Swal)
 
   const [username, setUsername] = useState('')
+
   useEffect(() => {
     setUsername(localStorage.getItem('username'))
   }, [])
+
   const handleAddCommissionDate = (date) => {
     setCommissionDates([...commissionDates, date])
     setCommissionModalIsOpen(false)
   }
+
   useEffect(() => {
     if (onRequestClose) {
       setCommissionDates([])
@@ -35,26 +41,64 @@ const RenovarContrato = ({ isOpen, onRequestClose, Contrato }) => {
         return
       }
 
-      // Determina el monto a enviar
+      const result = await MySwal.fire({
+        title: '¿Deseas vincular los pagos anteriores a este contrato?',
+        text: 'O deseas crear un nuevo contrato, este se deshabilitará',
+        icon: 'question',
+        showCancelButton: true,
+        cancelButtonText: 'No, mantener los pagos',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Crear nuevo contrato!'
+      })
+
       const montoRenovacion = monto !== '' ? parseFloat(monto) : Contrato.Monto
 
-      const response = await axiosInstance.put(`/contract/renew`, {
+      const data = {
         ID: Contrato.ContratoID,
         FechaInicio: fechaInicio,
         FechaFin: fechaFin,
         Monto: montoRenovacion,
         comisiones: commissionDates,
-        FechaPago: fechaPago
-      })
-      await axiosInstance.post('addInformation', {
-        username: username,
-        description: `Se renovo el contrato de la cedula del identidad : ${Contrato.CedulaPropietario} (${Contrato.InmuebleDireccion})`
-      })
+        FechaPago: fechaPago,
+        crear_nuevo: result.isConfirmed // Establece si es un nuevo contrato o no
+      }
 
-      console.log(response.data)
-      onRequestClose() // Cerrar modal al finalizar
+      // Realiza la solicitud de renovación o creación de contrato
+      const response = await axiosInstance.put('/contract/renew', data)
+
+      if (response.status === 200) {
+        const mensaje = result.isConfirmed
+          ? 'Contrato creado con éxito'
+          : 'Contrato renovado con éxito'
+
+        await MySwal.fire({
+          title: mensaje,
+          icon: 'success',
+          showConfirmButton: false,
+          timer: 1500
+        })
+        print(data.crear_nuevo)
+
+        await axiosInstance.post('addInformation', {
+          username: username,
+          description: `Se renovó el contrato de la cédula del propietario: ${Contrato.CedulaPropietario} (${Contrato.InmuebleDireccion})`
+        })
+
+        location.reload() // Recargar la página después del éxito
+      } else {
+        throw new Error('Error al renovar o crear el contrato')
+      }
+
+      onRequestClose()
     } catch (error) {
       console.error('Error al renovar el contrato:', error)
+      MySwal.fire({
+        title: 'Error',
+        text: 'Hubo un error al renovar el contrato. Inténtalo de nuevo más tarde.',
+        icon: 'error',
+        confirmButtonText: 'Ok'
+      })
     }
   }
 
@@ -106,7 +150,7 @@ const RenovarContrato = ({ isOpen, onRequestClose, Contrato }) => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="monto">Monto, monto actual : {Contrato.Monto}$</label>
+              <label htmlFor="monto">Monto, monto actual: {Contrato.Monto}$</label>
               <input
                 type="number"
                 className="form-control"
@@ -120,7 +164,7 @@ const RenovarContrato = ({ isOpen, onRequestClose, Contrato }) => {
                 <label htmlFor="CommissionDates ">Fechas de Comisiones</label>
                 <button
                   type="button"
-                  className="btn btn-secondary mt-2 "
+                  className="btn btn-secondary mt-2"
                   onClick={() => setCommissionModalIsOpen(true)}
                 >
                   Añadir Fechas de Comisión

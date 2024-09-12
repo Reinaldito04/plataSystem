@@ -44,3 +44,12 @@
 
     z-index: 2000000px !important; /* Ajusta este valor según sea necesario */
   }
+
+  .custom-overlay {
+    z-index: 1000; /* o el valor que consideres adecuado */
+  }
+  
+  .custom-modal {
+    z-index: 1100; /* para que el modal siempre esté por encima */
+  }
+  

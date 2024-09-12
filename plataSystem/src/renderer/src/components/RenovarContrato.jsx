@@ -78,7 +78,6 @@ const RenovarContrato = ({ isOpen, onRequestClose, Contrato }) => {
           showConfirmButton: false,
           timer: 1500
         })
-        print(data.crear_nuevo)
 
         await axiosInstance.post('addInformation', {
           username: username,

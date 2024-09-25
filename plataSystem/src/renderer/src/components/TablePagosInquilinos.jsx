@@ -26,7 +26,11 @@ function TablePagosInquilinos({ Tipo }) {
   const [username, setUsername] = useState('')
   const [total, setTotal] = useState(0)
   const [pagosOtros, setPagoOtros] = useState('')
+  const [metodoOtros, setMetodoOtros] = useState('')
   const [year, setYear] = useState('')
+  const [modalDate, setModalDate] = useState('')
+  const [editDate, setEditDate] = useState('')
+  const [editDateID, setEditDateID] = useState('')
   const MySwal = withReactContent(Swal)
 
   useEffect(() => {
@@ -61,6 +65,7 @@ function TablePagosInquilinos({ Tipo }) {
       setMontoContrato('')
       setMetodo('')
       setPagoOtros('')
+      setMetodoOtros('')
       setTipoPago('')
     }
   }, [Tipo, modalIsOpen, fetchData]) // Añade todas las dependencias necesarias
@@ -97,6 +102,20 @@ function TablePagosInquilinos({ Tipo }) {
       console.error('Error en el manejo de la eliminación del pago:', error)
     }
   }
+  const handleEditDateSubmit = async () => {
+    try {
+      const response = await axiosInstance.put(`/updatePay/${editDateID}`, { Date: editDate })
+      setModalDate(false)
+      setEditDate(null)
+      setEditDateID(null)
+      alert('Fecha actualizada correctamente')
+      fetchData()
+    } catch (error) {
+      console.error(error)
+      alert('Error al actualizar la fecha: ' + error.response.data.detail)
+    }
+  }
+
   const handleReportPay = async () => {
     try {
       const response = await axiosInstance.post(`/report-pays-year?year=${year}&Para=${Tipo}`)
@@ -119,6 +138,10 @@ function TablePagosInquilinos({ Tipo }) {
       console.log(error)
     }
   }
+  const handleEditDateModal = async (row) => {
+    setEditDateID(row.ID)
+    setModalDate(true)
+  }
   const handlePagoSubmit = async (event) => {
     event.preventDefault()
 
@@ -129,7 +152,7 @@ function TablePagosInquilinos({ Tipo }) {
         Amount: monto,
         PaymentType: Tipo,
         TypePay: tipoPago === 'Otros' ? pagosOtros : tipoPago,
-        PaymentMethod: metodo
+        PaymentMethod: metodo === 'Otros' ? metodoOtros : metodo
       }
       const response = await axiosInstance.post('/PayRental', payload)
       console.log('Pago registrado exitosamente:', response.data)
@@ -282,14 +305,25 @@ function TablePagosInquilinos({ Tipo }) {
     {
       name: 'Acciones',
       cell: (row) => (
-        <button
-          onClick={() => {
-            handlePagoDelete(row)
-          }}
-          className="btn btn-danger fs-6"
-        >
-          Eliminar
-        </button>
+        <div className=" ">
+          <button
+            onClick={() => {
+              handlePagoDelete(row)
+            }}
+            className="btn btn-danger  mt-1"
+          >
+            Eliminar
+          </button>
+
+          <button
+            onClick={() => {
+              handleEditDateModal(row)
+            }}
+            className="btn btn-info mt-1 text-white"
+          >
+            Editar Fecha
+          </button>
+        </div>
       )
     }
   ]
@@ -355,6 +389,39 @@ function TablePagosInquilinos({ Tipo }) {
           </button>
         </div>
       </div>
+
+      <Modal
+        className="custom-modal modalArriendo"
+        overlayClassName="custom-overlay"
+        isOpen={modalDate}
+        onRequestClose={() => setModalDate(false)}
+        contentLabel="Ejemplo de Modal"
+      >
+        <div className="container-botonmodal">
+          <button className="closeModal" onClick={() => setModalDate(false)}>
+            X
+          </button>
+          <div className="modal-content">
+            <h2 className="text-center">Editar Fecha</h2>
+            <form onSubmit={handleEditDateSubmit}>
+              <div className="form-group">
+                <label htmlFor="date">Fecha</label>
+                <input
+                  type="date"
+                  className="form-control"
+                  value={editDate}
+                  onChange={(e) => setEditDate(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <button type="submit" className="btn btn-primary">
+                  Guardar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </Modal>
 
       <Modal
         className="custom-modal modalArriendo"
@@ -432,6 +499,18 @@ function TablePagosInquilinos({ Tipo }) {
                 <option value="Transferencia Bolivares">Transferencia - Bolivares</option>
                 <option value="Otros">Otros</option>
               </select>
+              {metodo === 'Otros' && (
+                <div className="form-group">
+                  <label htmlFor="description">Otro Metodo de Pago</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="description"
+                    value={metodoOtros}
+                    onChange={(e) => setMetodoOtros(e.target.value)}
+                  />
+                </div>
+              )}
             </div>
             <div className="form-group">
               <label htmlFor="date">Fecha</label>

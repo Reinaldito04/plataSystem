@@ -30,7 +30,7 @@ function TablePagosInquilinos({ Tipo }) {
   const [year, setYear] = useState('')
   const [modalDate, setModalDate] = useState('')
   const [editDate, setEditDate] = useState('')
-  const [editDateID, setEditDateID] = useState('')
+  const [editDateID, setEditDateID] = useState(0)
   const MySwal = withReactContent(Swal)
 
   useEffect(() => {
@@ -104,15 +104,19 @@ function TablePagosInquilinos({ Tipo }) {
   }
   const handleEditDateSubmit = async () => {
     try {
-      const response = await axiosInstance.put(`/updatePay/${editDateID}`, { Date: editDate })
+      const payload = {
+        date: editDate
+      }
+      const response = await axiosInstance.put(
+        `/paymentEditDate/${parseInt(editDateID, 10)}`,
+        payload
+      )
+      console.log(response.data)
+      alert('Fecha editada correctamente')
       setModalDate(false)
-      setEditDate(null)
-      setEditDateID(null)
-      alert('Fecha actualizada correctamente')
       fetchData()
     } catch (error) {
-      console.error(error)
-      alert('Error al actualizar la fecha: ' + error.response.data.detail)
+      console.log(error)
     }
   }
 

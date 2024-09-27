@@ -1,7 +1,15 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
+import path, { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+
+// Cargar el icono según la plataforma
+const iconPath =
+  process.platform === 'win32'
+    ? path.join(__dirname, '../../resources/icon.ico') // Windows
+    : process.platform === 'darwin'
+      ? path.join(__dirname, '../../resources/icon.icns') // macOS
+      : path.join(__dirname, '../../resources/icon.png') // Linux
+
 const sqlite3 = require('sqlite3').verbose()
 
 function createWindow() {
@@ -9,8 +17,8 @@ function createWindow() {
     width: 900,
     height: 670,
     show: false,
+    icon: iconPath, // Usar el icono correcto según la plataforma
     autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
@@ -52,6 +60,7 @@ app.on('window-all-closed', () => {
   }
 })
 
+// Conexión a la base de datos SQLite
 const db = new sqlite3.Database('backend.db')
 
 db.serialize(() => {
@@ -59,9 +68,9 @@ db.serialize(() => {
     'CREATE TABLE IF NOT EXISTS BackendAddress (ID INTEGER PRIMARY KEY AUTOINCREMENT, address TEXT)'
   )
 })
+
 ipcMain.handle('save-address', (event, address) => {
   return new Promise((resolve, reject) => {
-    // Ejecutar la consulta SQL para actualizar la dirección en la base de datos
     db.run('UPDATE BackendAddress SET address = ? WHERE ID = 1', [address], function (err) {
       if (err) {
         reject(err)
@@ -71,6 +80,7 @@ ipcMain.handle('save-address', (event, address) => {
     })
   })
 })
+
 ipcMain.handle('get-address', (event) => {
   return new Promise((resolve, reject) => {
     db.get('SELECT address FROM BackendAddress ORDER BY id DESC LIMIT 1', (err, row) => {

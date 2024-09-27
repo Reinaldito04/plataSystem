@@ -68,12 +68,15 @@ function TableImmuebles() {
 
   return (
     <>
-      <DataTable
+   
+    <DataTable
         columns={columns}
         data={data}
         pagination
         onRowClicked={handleRowClick} // Asigna la función handleRowClick al evento onRowClicked
       />
+   
+      
 
       <CustomModal
         isOpen={modalIsOpen}

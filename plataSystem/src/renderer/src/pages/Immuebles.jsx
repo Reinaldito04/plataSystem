@@ -13,7 +13,7 @@ function Immuebles() {
         <p className="text">En esta sección se registran los inmuebles de la empresa</p>
         <TableImmuebles />
       </div>
-
+    
       <AddImmuebles />
     </Layout>
   )

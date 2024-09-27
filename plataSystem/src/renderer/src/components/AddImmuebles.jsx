@@ -77,7 +77,7 @@ function AddImmuebles() {
 
   return (
     <>
-      <div className="container">
+      <div className="">
         <button
           onClick={() => {
             setModalIsOpen(true)

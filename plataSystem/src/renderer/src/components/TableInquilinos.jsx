@@ -4,7 +4,7 @@ import axiosInstance from '../utils/BackendConfig'
 import Tippy from '@tippyjs/react'
 import 'tippy.js/dist/tippy.css'
 import Modal from 'react-modal'
-
+import ResumenContract from './ResumenContract'
 import './styles/AddArriendo.css'
 
 function TableInquilinos() {
@@ -14,6 +14,11 @@ function TableInquilinos() {
   const [selectedTenant, setSelectedTenant] = useState(null)
   const [dataPays, setDataPays] = useState(null)
   const [isOpen, setIsOpen] = useState(false)
+  const [filterText, setFilterText] = useState('')
+  const [contractsData, setContractsData] = useState([])
+  const [isContractsModalOpen, setIsContractsModalOpen] = useState(false)
+  const [isContractDetailsModalOpen, setIsContractDetailsModalOpen] = useState(false) // Nuevo estado para el modal de detalles del contrato
+  const [selectedContract, setSelectedContract] = useState(null) // Nuevo estado para el contrato seleccionado
 
   const deleteUser = async (id) => {
     const response = await axiosInstance.delete(`deleteInquilino/${id}`)
@@ -22,14 +27,14 @@ function TableInquilinos() {
       setData(newData)
       alert('Fue eliminado correctamente')
     } else {
-      alert('Ocurrio un error')
+      alert('Ocurrió un error')
       console.log(response)
     }
   }
 
   const openModal = async (tenant) => {
     setSelectedTenant(tenant)
-    setIsOpen(true) // Abre el modal antes de cargar los datos
+    setIsOpen(true)
     try {
       const response = await axiosInstance.get(`/getPaysInquilino/${tenant.id}`)
       setDataPays(response.data)
@@ -39,8 +44,33 @@ function TableInquilinos() {
     }
   }
 
+  const openContractsModal = async (tenant) => {
+    setSelectedTenant(tenant)
+    setIsContractsModalOpen(true)
+    try {
+      const response = await axiosInstance.get(`/contracts/getUser/${tenant.id}`)
+      setContractsData(response.data)
+      console.log(response.data)
+    } catch (err) {
+      console.error('Error al cargar los contratos:', err)
+    }
+  }
+
+  const openContractDetailsModal = (contract) => {
+    setSelectedContract(contract) // Almacena el contrato seleccionado
+    setIsContractDetailsModalOpen(true) // Abre el modal de detalles
+  }
+
   const onRequestClose = () => {
     setIsOpen(false)
+  }
+
+  const onContractsModalClose = () => {
+    setIsContractsModalOpen(false)
+  }
+
+  const onContractDetailsModalClose = () => {
+    setIsContractDetailsModalOpen(false) // Cierra el modal de detalles del contrato
   }
 
   useEffect(() => {
@@ -60,6 +90,12 @@ function TableInquilinos() {
 
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error: {error}</p>
+
+  const filteredData = data.filter((item) => {
+    const fullName = `${item.name} ${item.lastName}`.toLowerCase()
+    const dni = item.dni.toLowerCase()
+    return fullName.includes(filterText.toLowerCase()) || dni.includes(filterText.toLowerCase())
+  })
 
   const columnsPays = [
     {
@@ -91,6 +127,61 @@ function TableInquilinos() {
       name: 'Método',
       selector: (row) => row.Metodo,
       sortable: true
+    }
+  ]
+
+  const columnsContracts = [
+    {
+      name: 'Contrato ID',
+      selector: (row) => row.ContratoID,
+      sortable: true
+    },
+    {
+      name: 'Propietario',
+      selector: (row) => (
+        <Tippy
+          content={
+            <>
+              Cedula : {row.CedulaPropietario} <br />
+              Telefono : {row.Telefono} <br />
+            </>
+          }
+        >
+          <div>{`${row.PropietarioNombre} ${row.PropietarioApellido}`}</div>
+        </Tippy>
+      ),
+      sortable: true
+    },
+    {
+      name: 'Fecha Inicio',
+      selector: (row) => row.FechaInicio,
+      sortable: true
+    },
+    {
+      name: 'Fecha Fin',
+      selector: (row) => row.FechaFin,
+      sortable: true
+    },
+    {
+      name: 'Inmueble ',
+      selector: (row) => row.InmuebleDireccion,
+      sortable: true
+    },
+    {
+      name: 'Estado del Contrato',
+      selector: (row) => row.Estado,
+      sortable: true
+    },
+    {
+      name: 'Acciones',
+      cell: (row) => (
+        <button
+          className="btn btn-info"
+          onClick={() => openContractDetailsModal(row)} // Abre el modal de detalles del contrato
+        >
+          Ver Resumen
+        </button>
+      )
     }
   ]
 
@@ -187,11 +278,11 @@ function TableInquilinos() {
           >
             Eliminar
           </button>
-          <button
-            className="btn btn-primary"
-            onClick={() => openModal(row)} // Abrir el modal con los datos del inquilino
-          >
+          <button className="btn btn-primary" onClick={() => openModal(row)}>
             Ver Pagos
+          </button>
+          <button className="btn btn-secondary" onClick={() => openContractsModal(row)}>
+            Ver Contratos
           </button>
         </div>
       )
@@ -200,16 +291,31 @@ function TableInquilinos() {
 
   return (
     <>
-      <div style={{ width: '800px', overflowX: 'auto' }}>
+      <input
+        type="text"
+        placeholder="Buscar por nombre o DNI..."
+        value={filterText}
+        onChange={(e) => setFilterText(e.target.value)}
+        style={{ marginBottom: '10px', padding: '5px', width: '300px' }}
+      />
+
+      <div className="table-responsive">
         <DataTable
           columns={columns}
-          selectableRowsVisibleOnly
-          selectableRows
-          data={data}
+          data={filteredData}
           pagination
+          paginationPerPage={5}
+          paginationRowsPerPageOptions={[5, 10, 15, 20]}
+          paginationComponentOptions={{
+            rowsPerPageText: 'Filas por página:',
+            rangeSeparatorText: 'de',
+            noRowsPerPage: false,
+            selectAllRowsItem: false
+          }}
         />
       </div>
 
+      {/* Modal para ver pagos */}
       <Modal
         className="custom-modal modalArriendo"
         overlayClassName="custom-overlay"
@@ -224,7 +330,7 @@ function TableInquilinos() {
         </div>
         <div className="modal-content">
           <div className="">
-            <h2 className=" text-center">
+            <h2 className="text-center">
               Pagos de {selectedTenant?.name} {selectedTenant?.lastName}
             </h2>
           </div>
@@ -234,8 +340,8 @@ function TableInquilinos() {
                 columns={columnsPays}
                 data={dataPays}
                 pagination
-                paginationPerPage={5} // Elementos por página
-                paginationRowsPerPageOptions={[5, 10, 15, 20]} // Opciones de elementos por página
+                paginationPerPage={5}
+                paginationRowsPerPageOptions={[5, 10, 15, 20]}
                 paginationComponentOptions={{
                   rowsPerPageText: 'Filas por página:',
                   rangeSeparatorText: 'de',
@@ -245,6 +351,76 @@ function TableInquilinos() {
               />
             ) : (
               <p>Cargando pagos...</p>
+            )}
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal para ver contratos */}
+      <Modal
+        className="custom-modal modalArriendo"
+        overlayClassName="custom-overlay"
+        isOpen={isContractsModalOpen}
+        onRequestClose={onContractsModalClose}
+        contentLabel="Contratos del Inquilino"
+      >
+        <div className="container-botonmodal">
+          <button className="closeModal" onClick={onContractsModalClose}>
+            X
+          </button>
+        </div>
+        <div className="modal-content">
+          <div className="">
+            <h2 className="text-center">
+              Contratos de {selectedTenant?.name} {selectedTenant?.lastName}
+            </h2>
+          </div>
+          <div className="modal-body">
+            {contractsData && contractsData.length > 0 ? (
+              <DataTable
+                columns={columnsContracts}
+                data={contractsData}
+                pagination
+                paginationPerPage={5}
+                paginationRowsPerPageOptions={[5, 10, 15, 20]}
+                paginationComponentOptions={{
+                  rowsPerPageText: 'Filas por página:',
+                  rangeSeparatorText: 'de',
+                  noRowsPerPage: false,
+                  selectAllRowsItem: false
+                }}
+              />
+            ) : (
+              <p>Cargando contratos...</p>
+            )}
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal para ver detalles del contrato */}
+      <Modal
+        className="custom-modal modalArriendo"
+        overlayClassName="custom-overlay"
+        isOpen={isContractDetailsModalOpen}
+        onRequestClose={onContractDetailsModalClose}
+        contentLabel="Detalles del Contrato"
+      >
+        <div className="container-botonmodal">
+          <button className="closeModal" onClick={onContractDetailsModalClose}>
+            X
+          </button>
+        </div>
+        <div className="modal-content">
+          <div className="">
+            <h2 className="text-center">Detalles del Contrato {selectedContract?.ContratoID}</h2>
+          </div>
+          <div className="modal-body">
+            {selectedContract ? (
+              <>
+                <ResumenContract IdContract={selectedContract.ContratoID} />
+              </>
+            ) : (
+              <p>Cargando detalles del contrato...</p>
             )}
           </div>
         </div>

@@ -1,79 +1,119 @@
 .sidebar {
-    width: 250px;
-    height: 98%;
-    position: fixed;
-    top: 5px;
-    left: 0;
-    background-color: rgb(70, 130, 169);
-    color: #fff;
-    border-radius: 25px;
-    z-index: 9999999999;
-    padding-top: 50px;
-  }
-  
-  .sidebar-header {
-    padding: 20px;
-    text-align: center;
-  }
-  
-  .sidebar-header h3 {
-    margin: 0;
-  }
-  
-  .sidebar-menu {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .sidebar-menu li {
-    padding: 10px 20px;
-    border-bottom: 1px solid white;
-  }
-  
-  .sidebar-menu li:last-child {
-    border-bottom: none;
-  }
-  
-  .sidebar-link {
-    color: #fff;
-    font-weight: bold;
-    text-decoration: none;
-    transition: all 0.5s;
-    display: flex;
-    align-items: center;
-  }
-  .footerSidebar{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    bottom: 50px;
-    left: 0;
-    width: 250px;
-    height: 50px;
-    background-color: rgb(70, 130, 169);
-    color: white;
-    border-radius: 25px;
-    padding-top: 50px;
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgb(70, 130, 169);
+  color: #fff;
+  border-radius: 25px;
+  z-index: 9999;
+  padding-top: 50px;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  overflow-y: auto; /* Scroll cuando no cabe el contenido */
+}
 
-  }
-  .myName{
-    text-decoration: none;
-    color: white;
-    margin-left: 5px;
-    
-  }
-  .sidebar-link:hover{  
-    color: rgb(70, 130, 169);
-    background-color: white;
-    border-radius: 25px;
+.sidebar-header {
+  padding: 15px; /* Reducido el padding */
+  text-align: center;
+}
 
-  }
-  .sidebar-link i {
-    margin-right: 10px;
-  }
-.notificaciones{
+.sidebar-header h3 {
+  margin: 0;
+  font-size: 1.3em; /* Reducido el tamaño de la fuente */
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu li {
+  padding: 10px 15px; /* Reducido el padding */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-menu li:last-child {
+  border-bottom: none;
+}
+
+.sidebar-link {
+  color: #fff;
+  font-weight: bold;
+  text-decoration: none;
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  padding: 8px 10px; /* Reducido el padding interno */
+  border-radius: 10px;
+}
+
+.sidebar-link i {
+  margin-right: 8px; /* Reducido el margen */
+  font-size: 1.1em; /* Reducido el tamaño de los íconos */
+}
+
+.sidebar-link:hover {
+  color: rgb(70, 130, 169);
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.sidebar-link.active-link {
+  background-color: #fff;
+  color: rgb(70, 130, 169);
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+}
+
+.footerSidebar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  padding: 15px 0;
+  background-color: transparent;
+  color: white;
+}
+
+.footerSidebar a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+
+.footerSidebar a:hover {
+  color: #ddd;
+}
+
+.myName {
+  margin-left: 5px;
+  transition: color 0.3s ease-in-out;
+}
+
+.notificaciones {
   margin-right: 10px;
-  font-size: 25px;
-  
+  font-size: 20px; /* Reducido el tamaño de las notificaciones */
+}
+
+/* Ajuste para pantallas más pequeñas */
+@media screen and (max-height: 600px) {
+  .sidebar {
+    padding-top: 20px;
+    overflow-y: auto; /* Scroll automático en pantallas pequeñas */
+  }
+
+  .sidebar-link {
+    padding: 8px 12px;
+  }
+
+  .footerSidebar {
+    bottom: 10px;
+  }
 }

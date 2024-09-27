@@ -8,6 +8,7 @@ import Modal from 'react-modal'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import RenovarContrato from './RenovarContrato'
+import ResumenContract from './ResumenContract'
 const columns = (
   handlePrint,
   handleCancel,
@@ -514,122 +515,13 @@ function TableArriendos() {
         return (
           <>
             <p className="text-center">Resumen del contrato</p>
-            <div className="table-responsive">
-              <table className="table table-striped">
-                <thead>
-                  <tr>
-                    <th>Campo</th>
-                    <th>Valor</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Inquilino</td>
-                    <td>{detailsFromBackend.INQUILINO}</td>
-                  </tr>
-                  <tr>
-                    <td>Contacto</td>
-                    <td>{detailsFromBackend.N_CONTACTO}</td>
-                  </tr>
-                  <tr>
-                    <td>Correo</td>
-                    <td>{detailsFromBackend.CORREO}</td>
-                  </tr>
-                  <tr>
-                    <td>Inmueble</td>
-                    <td>{detailsFromBackend.INMUEBLE}</td>
-                  </tr>
-                  <tr>
-                    <td>Fecha de Contrato</td>
-                    <td>{detailsFromBackend.FECHA_CONTRATO}</td>
-                  </tr>
-                  <tr>
-                    <td>Canon</td>
-                    <td>{detailsFromBackend.CANON}</td>
-                  </tr>
-                  <tr>
-                    <td>Depósito en Garantía</td>
-                    <td>{detailsFromBackend.DEPOSITO_EN_GARANTIA}</td>
-                  </tr>
-
-                  {/* Canones Mensuales */}
-                  <tr>
-                    <td>Canones Mensuales</td>
-                    <td>
-                      <table className="table">
-                        <thead>
-                          <tr>
-                            <th>Mes</th>
-                            <th>Cantidad</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {Array.isArray(detailsFromBackend.CANONES_MENSUALES) ? (
-                            detailsFromBackend.CANONES_MENSUALES.map((canon, index) => (
-                              <tr key={index}>
-                                <td>{canon['CANON MES']}</td>
-                                <td>{canon.Cantidad}</td>
-                              </tr>
-                            ))
-                          ) : (
-                            <tr>
-                              <td colSpan="2">No hay canones mensuales disponibles</td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td>Total Contrato</td>
-                    <td>{detailsFromBackend.TOTAL_CONTRATO}</td>
-                  </tr>
-
-                  {/* Depósitos Efectuados */}
-                  <tr>
-                    <td>Depósitos Efectuados</td>
-                    <td>
-                      <table className="table">
-                        <thead>
-                          <tr>
-                            <th>Fecha</th>
-                            <th>Modalidad</th>
-                            <th>Cantidad</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {Array.isArray(detailsFromBackend.DEPOSITOS_EFECTUADOS) ? (
-                            detailsFromBackend.DEPOSITOS_EFECTUADOS.map((deposito, index) => (
-                              <tr key={index}>
-                                <td>{deposito.Fecha}</td>
-                                <td>{deposito.MODALIDAD}</td>
-                                <td>{deposito.Cantidad}</td>
-                              </tr>
-                            ))
-                          ) : (
-                            <tr>
-                              <td colSpan="3">No hay depósitos efectuados</td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </td>
-                  </tr>
-
-                  <tr>
-                    <td>Total Depositado</td>
-                    <td>{detailsFromBackend.TOTAL_DEPOSITADO}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <ResumenContract IdContract={detailsContrat.ContratoID} />
           </>
         )
       case 'ViewAcont':
         return (
           <>
-            <p className="text-center ">Acontecimientos vinculados al contrato</p>
+            <p className="text-center">Acontecimientos vinculados al contrato</p>
             <div className="table-responsive">
               <table className="table">
                 <thead>
@@ -639,12 +531,20 @@ function TableArriendos() {
                   </tr>
                 </thead>
                 <tbody>
-                  {detailsFromBackend.map((acontecimiento, index) => (
-                    <tr key={index}>
-                      <td>{acontecimiento.Detalle}</td>
-                      <td>{acontecimiento.Fecha}</td>
+                  {Array.isArray(detailsFromBackend) && detailsFromBackend.length > 0 ? (
+                    detailsFromBackend.map((acontecimiento, index) => (
+                      <tr key={index}>
+                        <td>{acontecimiento.Detalle || 'Sin Detalle'}</td>
+                        <td>{acontecimiento.Fecha || 'Sin Fecha'}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="2" className="text-center">
+                        No hay acontecimientos disponibles
+                      </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>

@@ -252,7 +252,7 @@ function TableContratosVencidos() {
         </button>
       </Modal>
     </>
-  
+  )
 }
 
 export default TableContratosVencidos

@@ -500,7 +500,10 @@ function TablePagosInquilinos({ Tipo }) {
                 <option value="">Seleccione</option>
                 <option value="Zelle">Zelle</option>
                 <option value="Dolares Efectivo">Dolares en Efectivo</option>
+                <option value="Pago Movil">Pago Movil</option>
+                <option value="Bolivares">Bolivares</option>
                 <option value="Transferencia Bolivares">Transferencia - Bolivares</option>
+                <option value="Banesco Panama">Banesco Panama</option>
                 <option value="Otros">Otros</option>
               </select>
               {metodo === 'Otros' && (

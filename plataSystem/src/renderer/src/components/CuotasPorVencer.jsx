@@ -64,7 +64,7 @@ function CuotasPorVencer() {
       <h3 className="text-center">Cuotas Por Vencer</h3>
       <div
         style={{
-          width: '800px',
+          width: '1000px',
           overflowY: 'auto'
         }}
       >

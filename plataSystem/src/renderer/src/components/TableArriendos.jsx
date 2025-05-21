@@ -15,7 +15,8 @@ const columns = (
   handleModal,
   tipoUser,
   openModal2,
-  desactivarContrato
+  desactivarContrato,
+  openModalEdit
 ) => [
   {
     name: 'ID del Contrato',
@@ -105,6 +106,11 @@ const columns = (
         <button className="btn btn-success mt-1" onClick={() => handleModal(row)}>
           Detalles
         </button>
+
+        <button className="btn btn-info mt-1" onClick={() => openModalEdit(row)}>
+          Editar
+        </button>
+
         <button className="btn btn-primary mt-1" onClick={() => openModal2(row)}>
           Renovar
         </button>
@@ -167,6 +173,7 @@ function TableArriendos() {
   const [error, setError] = useState('')
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [modalIsOpen2, setModalIsOpen2] = useState(false)
+  const [modalIsOpenEdit, setModalIsOpenEdit] = useState(false)
 
   const [detailsContrat, setDetailsContrat] = useState([])
   const [activeButton, setActiveButton] = useState('')
@@ -418,7 +425,30 @@ function TableArriendos() {
       console.log('Error al generar el formato:', error)
     }
   }
-
+  const handleEditSubmit = async () => {
+    try {
+      const data = {
+        FechaInicio: fechaInicio,
+        FechaFin: fechaFin,
+        Monto: monto
+      }
+      const response = await axiosInstance.put(`/contract/${selectedRow.ContratoID}`, data)
+      console.log(response.data)
+      MySwal.fire({
+        title: 'Contrato editado',
+        icon: 'success',
+        showConfirmButton: false,
+        timer: 1500
+      })
+      await axiosInstance.post('/addInformation', {
+        username: username,
+        description: `Se edito el contrato de la cedula del identidad : ${selectedRow.CedulaPropietario} (${selectedRow.InmuebleDireccion})`
+      })
+    } catch (error) {
+      console.error('Error al editar el contrato:', error)
+      alert('Hubo un error al editar el contrato. Inténtalo de nuevo más tarde.')
+    }
+  }
   const renderOptionsContent = () => {
     switch (activeButton) {
       case 'addAcont':
@@ -567,10 +597,19 @@ function TableArriendos() {
     setModalIsOpen2(true)
   }
 
+  const openModalEdit = (row) => {
+    setSelectedRow(row)
+    setModalIsOpenEdit(true)
+  }
+
   const closeModal2 = () => {
     setModalIsOpen2(false)
     setSelectedRow(null)
   }
+
+  const [fechaInicio, setFechaInicio] = useState('')
+  const [fechaFin, setFechaFin] = useState('')
+  const [monto, setMonto] = useState('')
 
   const filteredItems = data.filter((item) => {
     const fullNameCliente = `${item.ClienteNombre} ${item.ClienteApellido}`.toLowerCase()
@@ -604,7 +643,8 @@ function TableArriendos() {
           handleModal,
           tipoUser,
           openModal2,
-          desactivarContrato
+          desactivarContrato,
+          openModalEdit
         )}
         data={filteredItems}
         pagination
@@ -668,6 +708,64 @@ function TableArriendos() {
         </div>
       </Modal>
 
+      <Modal
+        className="custom-modal modalArriendo"
+        overlayClassName="custom-overlay"
+        isOpen={modalIsOpenEdit}
+        onRequestClose={() => setModalIsOpenEdit(false)}
+        contentLabel="Ejemplo de Modal"
+      >
+        <div className="container-botonmodal">
+          <button className="closeModal" onClick={() => setModalIsOpenEdit(false)}>
+            X
+          </button>
+        </div>
+        <div className="modal-content">
+          <h2 className="text-center">Editar Contrato</h2>
+          <div className="container-fluid mx-auto text-center">
+            <div className="form-group">
+              <label htmlFor="fechaInicio">Fecha de Inicio</label>
+              <input
+                type="date"
+                className="form-control"
+                id="fechaInicio"
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="fechaFin">Fecha de Vencimiento</label>
+              <input
+                type="date"
+                className="form-control"
+                id="fechaFin"
+                value={fechaFin}
+                onChange={(e) => setFechaFin(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="monto">Monto, monto actual: {selectedRow.Monto}$</label>
+              <input
+                type="number"
+                className="form-control"
+                id="monto"
+                value={monto}
+                onChange={(e) => setMonto(e.target.value)}
+              />
+            </div>
+            <div className="container-fluid mt-2 ">
+              <button
+                onClick={() => {
+                  handleEditSubmit()
+                }}
+                className="btn btn-success text-center mx-auto"
+              >
+                Editar
+              </button>
+            </div>
+          </div>
+        </div>
+      </Modal>
       <RenovarContrato Contrato={selectedRow} isOpen={modalIsOpen2} onRequestClose={closeModal2} />
     </>
   )
